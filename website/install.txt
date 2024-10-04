@@ -1,0 +1,44 @@
+Installation Instructions for Monster:
+======================================
+
+The Monster source code comes in three files:
+
+	guts.pas	short.  VMS system calls and such.
+	mon.pas		large.  The Monster code.
+	privusers.pas   very short.  Local definitions to make Monster
+			work on your system.
+
+You should edit privusers.pas before compiling.  Put in the userid's of
+people who will be the game administrators and set the ROOT variable to
+point to the directory where the Monster datafiles will be kept.
+
+This directory should have read/write access for everyone who will play
+Monster.  You can either do this with SET PROT=(W:RWE) or with ACL's.
+
+After you've got this all setup, compile Monster:
+
+	pas guts
+	pas mon
+	link mon,guts
+	rename mon.exe monster.exe
+
+Now, before you let anyone else play, RUN MONSTER.
+When it says "Hit return to start: "  DON'T.  Instead, this very first
+time only, type "rebuild".   This will make Monster go and create all of
+its special datafiles in the directory pointed to by the root variable in
+privusers.pas.  After Monster is done making its files you will appear in
+a very small and empty world.  Time to start creating!
+
+We've got a pretty large Monster universe here at Northwestern.  It's about
+250+ rooms, and took several months for many people to create.  I thought
+about shipping the world with the game, but most of the fun of Monster is
+creating your own rooms, and it would be difficult to make our Monster world
+mesh with a foreign VMS system (all the room ownership would be wrong and
+such).  If you have problems programming rooms post a note to GameMasters,
+rec.games.programmer, or send a note here.
+
+Let me know how you like Monster,
+
+Rich Skrenta
+skrenta@nuacc.acns.nwu.edu
+skrenta@nuacc.bitnet

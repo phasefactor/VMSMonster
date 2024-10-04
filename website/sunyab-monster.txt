@@ -1,0 +1,1448 @@
+
+
+I didn't do much, before another person with my uid logged on.
+
+Here it is.  Vt100 Esc codes have been added since my day so you may see
+some junk.  Chars if you tty cannot eat them.
+
+-----------------------------here it is------------------------------------
+Script started on Tue Feb 26 19:33:07 1991
+Trying 128.205.2.2...
+Connected to 128.205.2.2.
+Escape character is '^]'.
+
+Username: MASPROJ1
+Password:
+        Welcome to VAX/VMS version V5.4-1A on node UBVMSC
+    Last interactive login on Tuesday, 26-FEB-1991 20:35
+    Last non-interactive login on Friday, 22-FEB-1991 20:13
+
+*
+* Users should read the following NEWS newsgroups:
+*
+*     sunyab.announce.important (Important global announcements)
+*     sunyab.announce.*         (General announcements)
+*     sunyab.general                           
+*     sunyab.grads                             
+*     sunyab.undergrads                        
+*     sunyab.*.announce         (Specific announcements)
+*     sunyab.vms.tutorial       (VMS specific hints)
+*
+* Userids CONSULT, ASKOPER, MICHOT, REPAIR, and GRIPE answer MAIL about
+*         VMS/CMS, Operations, Micros, Communications, and Academic Computing
+*
+********************************************************************
+*  Computer STATUS Telephone Number is 636-3525.                   *
+*------------------------------------------------------------------*
+*  Xerox 8700 will be down 8-10am every Tuesday for maintenance    *
+*------------------------------------------------------------------*
+********************************************************************
+
+ubvms> maslib monster
+*******************************************************************************
+*                     College of Mathematical Sciences                        *
+*                      (MASLIB@UBVMS or MASTER@UBVMS)                         *
+*                                                                             *
+*           This version of the maslib driver is brought to you by:           *
+*                                                                             *
+*    Dan English (MASDAN@UBVMS)                Greg Molik (MASGREG@UBVMS)     *
+*    Erik Bryant (MASERIK@UBVMS)               Bill Palter (MASBILL@UBVMS)    *
+*                                                                             *
+*******************************************************************************
+   Mail problems to masdan and maslib.
+   Read the sunyab.games newsgroup for more information about maslib games.
+
+
+Welcome MASPROJ1 asking for MONSTER on UBVMSC at terminal NTY118:.
+
+1) Play Monster
+2) Play Monster2
+
+Version> 1
+ )0 =Welcome to Monster: a multi-user game where the players make the universe.
+
+
+ Select a Universe to enter:
+
+1)         Monster - Multi-User adventure game.
+2)              UB - The world we live in.
+
+Choose D for the default universe.
+Universe> 2   1
+
+Welcome to the world of Monster
+Type Help now for startup commands:
+
+Welcome back, King Kickass.  Your last play was on 24-FEB-1991 at 3:35pm.
+
+You're in the Necromancer Street.
+
+  This section of the street connect some of the more interesting
+sections of the city. To the north one may enter the
+Grand Playhouse where delights for the eyes (but not hands) can be
+found. Further travel to the east will lead you to the more
+businesslike sections of the street.
+
+To the south is the archives.
+The street continues east and west.
+
+> who
+                     Monster Status
+                  26-FEB-1991  8:38pm
+                  * - Monster Operator
+
+Username   Game Name             Level     Class  Where
+v112pfsd   Turin Deathstalker        7     Thief  royal passageway
+v130qmty   Friendly Druid            1  HelDruid  void
+v063j3h4   Magog                     1      Mage  the maze
+v056mdht   sorry freeon it           2     Troll  northwest corner
+v051lpqa  *opp'n along               9  GameMstr  the maze
+v059nqal   Soulcatcher               3      Mage  the maze
+v125qqna   Hanged Man                3     Mummy  bordering forest
+v999rbqh   Freeon it                 1     Troll  east base of hill
+v125qqml   Puzzeledfrog              1   Warrior  lothlorien shop
+masproj1   King Kickass              1     Troll  necromancer street.
+v108npa5   Mummy                     1     Troll  the maze
+> sje
+Bad command.  Type ? for a list.
+> she
+--------------- Character Sheet ------------------
+Name        :King Kickass
+Class       :Troll
+Size        :      9'
+Exp/level   :   1630/1
+Health/Max  :   2638/2638
+Move delay  :     38/100 seconds
+Attack delay:    280/100 seconds
+Weapon usage:    100%
+Poison chnce:      5%
+Move silent :     10%
+Armor       :     20%
+Total Kills :      3
+Money       :     44
+Money in Bank:      70
+Weapon      :claws 250/395
+--------------------------------------------------
+> l
+You're in the Necromancer Street.
+
+  This section of the street connect some of the more interesting
+sections of the city. To the north one may enter the
+Grand Playhouse where delights for the eyes (but not hands) can be
+found. Further travel to the east will lead you to the more
+businesslike sections of the street.
+
+To the south is the archives.
+The street continues east and west.
+
+> e
+You're in the Necromancer Street
+
+  Beyond a doubt this is the most interesting section of the
+Necromancer street complex.
+
+Warring factions have littered this area with signs. Clearly
+the argument lies on whether the God depicted in the Church
+exists or whether the Atheist's are correct. Arguments
+are depicted on signs everywhere.
+
+To the north is king's road south.
+To the south is north atheist ave..
+Necromancer Street continues to both the east & west.
+
+> e
+You're in the Necromancer Street
+
+Cafe Mana is to the north.
+To the east is east entrance.
+Necromancer Street continues to the west.
+
+> e
+You're at East Entrance
+
+ You have passed through the east entrance into the Wizard City.
+Here all your fantasies for power and your fears of death
+may be fulfilled. Great places of learning such as the Library
+of Ancients may teach you, the Wizard City Inn may house you,
+numerous resteraunts may feed you, shops and stores may
+provide you with all you may need, but cross not the leaders
+of the Guilds that lie in the city or Death and the graveyard may
+be your only reward for your stay in the city.
+
+There is an Alley to the north.
+There are more shops to the south.
+To the east is west bank of river.
+To the west is necromancer street.
+
+> n
+
+ You feel a rat crawl over and down your back as you
+crawl your way northward.
+
+You're in an Alley
+
+ This small alley connects the major guilds and the shopping
+district of the Wizard City. Beyond a doubt the only thing
+more disgusting then the thought of travelling further down
+this rat infested alley is the thought of being stuck here
+any longer.
+
+To the north is the guild district..
+To the south is east entrance.
+There is a small opening down into the Sewer System.
+
+> n   w
+You can't go that way.
+> n
+You're in the Guild District.
+
+The Wizard's Inn lies to the North.
+There is an Alley to the south.
+The Guild District continues to the west.
+
+> w
+You're in the Guild District
+
+You are in the Guild District, the district in which the many guilds
+have their headquarters.  If you are the leader of a worthy class and
+wish to have a guildhouse here, ask the mayor of the city for the
+required building permits.
+
+The Wizard's Guild is north.
+The Guild District continues to the east.
+King's Road is to the west.
+There is a dark gateway west.
+
+> w
+You're in the King's Road North
+
+To the north is king's road end.
+To the south is king's road south.
+The Guild District is to the east.
+To the west is citadel lane.
+
+>
+(Mummy has returned to sleep.)
+> e
+You're in the Guild District
+
+You are in the Guild District, the district in which the many guilds
+have their headquarters.  If you are the leader of a worthy class and
+wish to have a guildhouse here, ask the mayor of the city for the
+required building permits.
+
+The Wizard's Guild is north.
+The Guild District continues to the east.
+King's Road is to the west.
+There is a dark gateway west.
+
+> s
+You may want to turn off Brief mode upon entering.
+You're in Craftmans Guild
+You have entered the guild of the craftsman.  Here many wares are
+bought and sold at fair prices and just about any items can be found
+in the guild.  On the far wall(as you come into the guild) are directions
+and prices of items sold in this room.  Perhaps you should pick up a
+snack for yourself before you venture on into the rest of the guild.
+There are some merchants near the south wall who seem to be selling bottles
+of some sort of alcoholic liquids.  They are unlike anything you have
+ever seen.  They are bubbling and smoking in their glasses.  You see a sign
+marked  Thirsty???......  but you can't make out the rest from this distance
+Maybe you should go closer and see what they are selling.
+
+To the north is a set of double doors which lead out into the guild district.
+The Local Blacksmith's 621 is to the east. Buy something,support your guild.
+In the Western room is Dain's Armory (the Local Armory Guild Member).
+
+You can buy some Chicken Wings for 150.
+You can buy a Steak for 40.
+You can buy a Roast Beef Sandwich for 30.
+You can buy a Reuben Sandwich for 20.
+You can buy a Stick Of Dynamite for 125.
+> s
+Hanged Man has come into the room from: north
+ [1mHanged Man's claws creams your poor little body  
+You are in tremendous strength, and feel powerful.
+> s   get    
+ [0m [1mHanged Man's claws hits you very hard 
+You are in superior condition and feel very strong.
+ [0mFreeon it has been slain by a twist of fate.
+> get         n
+You're in the Guild District
+
+You are in the Guild District, the district in which the many guilds
+have their headquarters.  If you are the leader of a worthy class and
+wish to have a guildhouse here, ask the mayor of the city for the
+required building permits.
+
+The Wizard's Guild is north.
+The Guild District continues to the east.
+King's Road is to the west.
+There is a dark gateway west.
+
+> att hang
+That person cannot be seen in this room.
+>
+Hanged Man has come into the room from: south
+ [1mHanged Man's claws nearly splits you in two   
+You are in exceptional health.
+> .
+ [0mYour claws hits Hanged Man with incredible force 
+ [1mHanged Man's claws creams your poor little body  
+You are in good health and have your wits about you.
+ [0mYour weapon damage is reduced by Hanged Man's armor.
+Hanged Man is in tremendous condition.
+ [1mHanged Man's claws creams your poor little body  
+You have some minor wounds.
+> .
+ [0mYour claws creams Hanged Man's poor little body  
+Your weapon is deflected by Hanged Man's armor.
+> .
+You deliver an almost deadly blow to Hanged Man with your claws  
+Hanged Man is in tremendous condition.
+ [1mHanged Man's claws hits you very hard 
+You are in critical condition.
+The sharp arrow has slipped out of your hands.
+ [0mYour weapon damage is reduced by Hanged Man's armor.
+> e
+You're in the Guild District.
+
+The Wizard's Inn lies to the North.
+There is an Alley to the south.
+The Guild District continues to the west.
+
+> she
+--------------- Character Sheet ------------------
+Name        :King Kickass
+Class       :Troll
+Size        :      9'
+Exp/level   :   1630/1
+Health/Max  :    172/2638
+Move delay  :     38/100 seconds
+Attack delay:    280/100 seconds
+Weapon usage:    100%
+Poison chnce:      5%
+Move silent :     10%
+Armor       :     20%
+Total Kills :      3
+Money       :     44
+Money in Bank:      70
+Weapon      :claws 250/395
+--------------------------------------------------
+> e
+You can't go that way.
+>
+Hanged Man has come into the room from: west
+ [1mHanged Man's claws creams your poor little body  
+
+        *** You have died  ***
+
+You're in the Void
+
+Friendly Druid is here.
+Friendly Druid is in exceptional health.
+>
+ [0mYou now have 50 wealth
+You're in Classroom
+
+This is the basic classroom of the realm.  There are various old
+tomes scattered about the room.  Most of them are in too bad shape
+too read.  There are some other rooms attached to this room that
+may help you however.
+
+The map room of the realm lies to the north.
+The room of basic lore, and the second hand store lie to the east.
+To change you class, go west to the Halls of Might, Magic, and Monsters.
+Type: EXIT to leave the classroom.
+
+On the ground here is a Please Read.
+>
+(Turin Deathstalker has returned to sleep.)
+> who
+                     Monster Status
+                  26-FEB-1991  8:41pm
+                  * - Monster Operator
+
+Username   Game Name             Level     Class  Where
+v130qmty   Friendly Druid            1  HelDruid  void
+v063j3h4   Magog                     2      Mage  smelt
+v056mdht   op come                   3     Troll  the maze
+v051lpqa  *opp'n along               9  GameMstr  the maze
+v059nqal   Soulcatcher               3      Mage  the maze
+v125qqna   Hanged Man                3     Mummy  the guild district
+v999rbqh   Freeon it                 1     Troll  well worn path
+v125qqml   Puzzeledfrog              1   Warrior   ---
+masproj1   King Kickass              1     Troll  classroom
+> 'Oh e   well...
+>
+Puzzeledfrog has been slain by Giant Spider's Elf Slayer.
+> w
+You're in Hall of Might
+
+Go north to become a Knight
+Go south to become an Elf
+To the east is classroom.
+To the west is hall of mayhem.
+Go up do become a sturdy Dwarf
+Go down to become a Ranger
+
+> w
+You're in Hall of Mayhem
+
+Go north to be transmorgrified into a Centaur
+Go south to become a nimble fingered Thief
+To the east is hall of might.
+To the west is hall of marauders.
+Go up to become a Drow.
+Go down to become a Warrior
+
+> w
+You are in exceptional health.
+You feel dizzy from lack of food.
+> w
+You're in Hall of Marauders
+
+Go north to become an Anti-Paladin.
+To the east is hall of mayhem.
+To the west is hall of magic.
+
+> w
+You're in Hall of Magic
+
+Go north to become a Mage
+Go south to become a HelDruid
+To the east is hall of marauders.
+To the west is hall of monsters.
+Go down to become a Deryni, a master of the arts of the mind.
+
+> w
+You're in Hall of Monsters
+
+Go north to become a Goblin
+To the east is hall of magic.
+Go west to become a Mummy
+Go up to become a Troll
+Go down to become a Spectre
+
+> e
+You're in Hall of Magic
+
+Go north to become a Mage
+Go south to become a HelDruid
+To the east is hall of marauders.
+To the west is hall of monsters.
+Go down to become a Deryni, a master of the arts of the mind.
+
+> e
+You're in Hall of Marauders
+
+Go north to become an Anti-Paladin.
+To the east is hall of mayhem.
+To the west is hall of magic.
+
+>
+You are in superior condition and feel very strong.
+> e
+You're in Hall of Mayhem
+
+Go north to be transmorgrified into a Centaur
+Go south to become a nimble fingered Thief
+To the east is hall of might.
+To the west is hall of marauders.
+Go up to become a Drow.
+Go down to become a Warrior
+
+> e
+You're in Hall of Might
+
+Go north to become a Knight
+Go south to become an Elf
+To the east is classroom.
+To the west is hall of mayhem.
+Go up do become a sturdy Dwarf
+Go down to become a Ranger
+
+> d
+You are now a Ranger.
+> she
+--------------- Character Sheet ------------------
+Name        :King Kickass
+Class       :Ranger
+Size        :      6'
+Exp/level   :   1315/1
+Health/Max  :   1716/2292
+Move delay  :     20/100 seconds
+Attack delay:    200/100 seconds
+Weapon usage:    104%
+Move silent :     44%
+Total Kills :      3
+Money       :     50
+Money in Bank:      70
+Mana free/used/max: 0/0/42
+--------------------------------------------------
+> learn
+        Spell name      cst lvl time           Spell name      cst lvl time
+ 1           heal self   4   0    2 |   2    thundering voice   2   0    0
+ 3          Frost bolt   3   0    1 |   4       prismatic orb   6   0    1
+ 5          flame bolt   6   0    0 |   6              Zapper   0   0    0
+ 7        Detect Magic  12   0    1 |   8               Where   2   0    0
+ 9        cone of cold  30   2    1 |  11         heal person   7   0    1
+12       Find familiar  30   0    1 |  13       magic missile   6   0    1
+14               Speed  25   0    1 |  15     blistering heat  10   0    2
+16                Stun  12   0    1 |  17            strength  20   0    1
+18         Emerald Ray  25   0    2 |  19               Blade  15   0    2
+20       Wave of force  10   0    1 |  21      lightning bolt  14   0    2
+22         cure poison   6   0    1 |  23        Invisibility  15   0    1
+24                void  35   2    2 |  25              Vanish   0   3    0
+26        Hand of Tutt   0   0    0 |  28         True Seeing   5   0    1
+29               Sleep  18   0    1 |  30            fireball  30   2    1
+31        Poison Cloud  20   0    2 |  32           cold ball  25   2    2
+35      Ball Lightning  23   2    1 |  40      shatter person  32   3    2
+42    Limited Divinity 100   3    0 |  45            paralyze  32   3    1
+47       Dragon Breath  10   0    0 |  49         freeze area  40   3    1
+50            MasWrath  42   3    1 |
+>
+(Puzzeledfrog has returned to sleep.)
+>
+(Puzzeledfrog once again roams the land.)
+>
+(Ars Moriendi has returned to sleep.)
+>
+You hear a message from Fletch the Elf: op come is slightly wounded.
+>  learn
+        Spell name      cst lvl time           Spell name      cst lvl time
+ 1           heal self   4   0    2 |   2    thundering voice   2   0    0
+ 3          Frost bolt   3   0    1 |   4       prismatic orb   6   0    1
+ 5          flame bolt   6   0    0 |   6              Zapper   0   0    0
+ 7        Detect Magic  12   0    1 |   8               Where   2   0    0
+ 9        cone of cold  30   2    1 |  11         heal person   7   0    1
+12       Find familiar  30   0    1 |  13       magic missile   6   0    1
+14               Speed  25   0    1 |  15     blistering heat  10   0    2
+16                Stun  12   0    1 |  17            strength  20   0    1
+18         Emerald Ray  25   0    2 |  19               Blade  15   0    2
+20       Wave of force  10   0    1 |  21      lightning bolt  14   0    2
+22         cure poison   6   0    1 |  23        Invisibility  15   0    1
+24                void  35   2    2 |  25              Vanish   0   3    0
+26        Hand of Tutt   0   0    0 |  28         True Seeing   5   0    1
+29               Sleep  18   0    1 |  30            fireball  30   2    1
+31        Poison Cloud  20   0    2 |  32           cold ball  25   2    2
+35      Ball Lightning  23   2    1 |  40      shatter person  32   3    2
+42    Limited Divinity 100   3    0 |  45            paralyze  32   3    1
+47       Dragon Breath  10   0    0 |  49         freeze area  40   3    1
+50            MasWrath  42   3    1 |
+> whpo      
+op come has been slain by Roxanne the Grunt's black jack.
+> who
+                     Monster Status
+                  26-FEB-1991  8:44pm
+                  * - Monster Operator
+
+Username   Game Name             Level     Class  Where
+v130qmty   Friendly Druid            1  HelDruid  void
+v063j3h4   Magog                     2      Mage  the maze
+v056mdht   op come                   2     Troll  void
+v051lpqa  *opp'n along               9  GameMstr  the maze
+v059nqal   Soulcatcher               3      Mage  upper east library
+v125qqna   Hanged Man                3     Mummy  stralsund hamlet
+v999rbqh   Freeon it                 1     Troll  the baker shop
+masproj1   King Kickass              1    Ranger  hall of might
+> 'Vultchgers            ers, poor op come was killed by the masses :(
+> she
+--------------- Character Sheet ------------------
+Name        :King Kickass
+Class       :Ranger
+Size        :      6'
+Exp/level   :   1315/1
+Health/Max  :   1716/2292
+Move delay  :     20/100 seconds
+Attack delay:    200/100 seconds
+Weapon usage:    104%
+Move silent :     44%
+Total Kills :      3
+Money       :     50
+Money in Bank:      70
+Mana free/used/max: 0/0/42
+--------------------------------------------------
+> 'damn no mana yet 
+>  e
+xTrollmaster has been slain by a twist of fate.
+You're in Classroom
+
+This is the basic classroom of the realm.  There are various old
+tomes scattered about the room.  Most of them are in too bad shape
+too read.  There are some other rooms attached to this room that
+may help you however.
+
+The map room of the realm lies to the north.
+The room of basic lore, and the second hand store lie to the east.
+To change you class, go west to the Halls of Might, Magic, and Monsters.
+Type: EXIT to leave the classroom.
+
+On the ground here is a Please Read.
+> e
+You're in Room of Basic Lore
+
+Welcome to the room of basic lore.  Within these walls you will find many
+tomes of great knowledge about the world as we know it.  This is a vast
+resource especially if you are a beginning player.
+
+On the shelves this week are five books of more interest than the others
+around them:   Weapons book , Spells book , Realms book , Wealth book ,
+and  Basic info .  To read one of these, type  LOOK <bookname> .  For
+example, LOOK WEAPONS BOOK will allow you to read the weapons book.
+
+
+To the north is second hand store.
+The classroom lies to the west.
+
+> w
+You're in Classroom
+
+This is the basic classroom of the realm.  There are various old
+tomes scattered about the room.  Most of them are in too bad shape
+too read.  There are some other rooms attached to this room that
+may help you however.
+
+The map room of the realm lies to the north.
+The room of basic lore, and the second hand store lie to the east.
+To change you class, go west to the Halls of Might, Magic, and Monsters.
+Type: EXIT to leave the classroom.
+
+On the ground here is a Please Read.
+> s
+You can't go that way.
+> w
+You're in Hall of Might
+
+Go north to become a Knight
+Go south to become an Elf
+To the east is classroom.
+To the west is hall of mayhem.
+Go up do become a sturdy Dwarf
+Go down to become a Ranger
+
+> e
+You're in Classroom
+
+This is the basic classroom of the realm.  There are various old
+tomes scattered about the room.  Most of them are in too bad shape
+too read.  There are some other rooms attached to this room that
+may help you however.
+
+The map room of the realm lies to the north.
+The room of basic lore, and the second hand store lie to the east.
+To change you class, go west to the Halls of Might, Magic, and Monsters.
+Type: EXIT to leave the classroom.
+
+On the ground here is a Please Read.
+> e
+You're in Room of Basic Lore
+
+Welcome to the room of basic lore.  Within these walls you will find many
+tomes of great knowledge about the world as we know it.  This is a vast
+resource especially if you are a beginning player.
+
+On the shelves this week are five books of more interest than the others
+around them:   Weapons book , Spells book , Realms book , Wealth book ,
+and  Basic info .  To read one of these, type  LOOK <bookname> .  For
+example, LOOK WEAPONS BOOK will allow you to read the weapons book.
+
+
+To the north is second hand store.
+The classroom lies to the west.
+
+> e
+You can't go that way.
+> n
+You're in the Second Hand Store
+
+All around you are second hand, run down, and almost broken objects.
+But since it is free, you just might be able to find something worth
+the price
+
+To the south is room of basic lore.
+
+You can buy Rusty Armor for 0.
+You can buy a Rusty sword for 0.
+You can buy a Frost Wand for 0.
+You can buy an Orange Juice for 0.
+>
+You are in tremendous strength, and feel powerful.
+>
+You feel magically energized.
+>
+You are in tremendous strength, and feel powerful.
+You feel dizzy from lack of food.
+> get oran
+All yours for 0 gold.
+> .
+All yours for 0 gold.
+> .
+All yours for 0 gold.
+> .
+All yours for 0 gold.
+> .
+All yours for 0 gold.
+> .
+All yours for 0 gold.
+> .
+All yours for 0 gold.
+> .
+All yours for 0 gold.
+> .
+All yours for 0 gold.
+> .
+All yours for 0 gold.
+> .
+Your hands are full.  You'll have to drop something you're carrying first.
+> .
+Your hands are full.  You'll have to drop something you're carrying first.
+> drink ora
+You drink an Orange Juice.
+You are full.
+> .
+You drink an Orange Juice.
+You are full.
+> .
+You drink an Orange Juice.
+You are full.
+> .
+You drink an Orange Juice.
+You are full.
+> .
+You drink an Orange Juice.
+You are full.
+> .
+You drink an Orange Juice.
+You are full.
+>
+You are in tremendous strength, and feel powerful.
+>
+You feel magically energized.
+>
+> .
+You drink an Orange Juice.
+You are full.
+> .
+You drink an Orange Juice.
+You are full.
+> get oran
+All yours for 0 gold.
+> .
+All yours for 0 gold.
+> .
+All yours for 0 gold.
+> l
+You're in the Second Hand Store
+
+All around you are second hand, run down, and almost broken objects.
+But since it is free, you just might be able to find something worth
+the price
+
+To the south is room of basic lore.
+
+You can buy Rusty Armor for 0.
+You can buy a Rusty sword for 0.
+You can buy a Frost Wand for 0.
+You can buy an Orange Juice for 0.
+> get rusty ar
+All yours for 0 gold.
+> get rusty sw
+All yours for 0 gold.
+> wiled rusty sw\                                             
+You feel magically energized.
+> wield rusty sw
+The Rusty sword is now equipped.
+> wile         ear rusty ar
+The Rusty Armor is now equipped.
+> she
+--------------- Character Sheet ------------------
+Name        :King Kickass
+Class       :Ranger
+Size        :      6'
+Exp/level   :   1315/1
+Health/Max  :   2292/2292
+Move delay  :     51/100 seconds
+Attack delay:    270/100 seconds
+Weapon usage:    104%
+Move silent :     44%
+Total Kills :      3
+Money       :     50
+Money in Bank:      70
+Weapon      :Rusty sword 160/160
+Worn armor  :5/8/4
+Mana free/used/max: 12/0/42
+--------------------------------------------------
+> l king k
+You step outside of yourself for a moment to get an objective self-appraisal:
+
+King Kickass is in tremendous condition.
+     an Orange Juice      Excellent
+     an Orange Juice      Excellent
+     an Orange Juice      Excellent
+     an Orange Juice      Excellent
+     an Orange Juice      Excellent
+         Rusty Armor      Excellent [Body]
+       a Rusty sword      Excellent [Two handed]
+>
+You feel magically energized.
+> w
+You can't go that way.
+> s
+You can't go that way.
+> w
+You can't go that way.
+> l
+You're in the Second Hand Store
+
+All around you are second hand, run down, and almost broken objects.
+But since it is free, you just might be able to find something worth
+the price
+
+To the south is room of basic lore.
+
+You can buy Rusty Armor for 0.
+You can buy a Rusty sword for 0.
+You can buy a Frost Wand for 0.
+You can buy an Orange Juice for 0.
+> s
+You can't go that way.
+> drop ora
+Sold for 0 
+> .
+Sold for 0 
+> .
+Sold for 0 
+> .
+Sold for 0 
+>
+You feel magically energized.
+> .
+Sold for 0 
+> .
+You're not holding that item.  To see what you're holding, type INV.
+> .
+You're not holding that item.  To see what you're holding, type INV.
+> s
+You're in Room of Basic Lore
+
+Welcome to the room of basic lore.  Within these walls you will find many
+tomes of great knowledge about the world as we know it.  This is a vast
+resource especially if you are a beginning player.
+
+On the shelves this week are five books of more interest than the others
+around them:   Weapons book , Spells book , Realms book , Wealth book ,
+and  Basic info .  To read one of these, type  LOOK <bookname> .  For
+example, LOOK WEAPONS BOOK will allow you to read the weapons book.
+
+
+To the north is second hand store.
+The classroom lies to the west.
+
+> w
+You're in Classroom
+
+This is the basic classroom of the realm.  There are various old
+tomes scattered about the room.  Most of them are in too bad shape
+too read.  There are some other rooms attached to this room that
+may help you however.
+
+The map room of the realm lies to the north.
+The room of basic lore, and the second hand store lie to the east.
+To change you class, go west to the Halls of Might, Magic, and Monsters.
+Type: EXIT to leave the classroom.
+
+On the ground here is a Please Read.
+>
+Magog, the svelt is the way out
+>
+(Magog once again roams the land.)
+>
+Magog has been slain by Hobgoblin's Elf Slayer.
+>
+(Freeon it once again roams the land.)
+> ls
+Bad command.  Type ? for a list.
+> l
+You're in Classroom
+
+This is the basic classroom of the realm.  There are various old
+tomes scattered about the room.  Most of them are in too bad shape
+too read.  There are some other rooms attached to this room that
+may help you however.
+
+The map room of the realm lies to the north.
+The room of basic lore, and the second hand store lie to the east.
+To change you class, go west to the Halls of Might, Magic, and Monsters.
+Type: EXIT to leave the classroom.
+
+On the ground here is a Please Read.
+> exit
+
+You wander into a strange room that has no walls...
+
+You're at the Blue Room
+
+You are standing in a room that glows a strange, eery blue. The
+glow appears to be emanating from a strange forcefield of some
+sort. You hear a low hum in the room. There are several stones
+in the middle of the room that are worn smooth from excessive
+use.
+
+To the north is valley of nis.
+To the south is the city square.
+To the east is fountain of the gods.
+To the west is lothlorien forest.
+
+On the ground here is a Tree.
+On the ground here is a Pyramid.
+On the ground here is a Elfstone.
+On the ground here is a Rock.
+On the ground here is a Key to the City.
+On the ground here is a Pool.
+>
+POOF  Magog has appeared from nowhere 
+>
+Magog has gone east.
+> s
+You're at the City Square
+
+To the north is south festival str..
+To the south is north paladin road.
+To the east is necromancer street..
+To the west is the west entrance.
+
+>
+You feel magically energized.
+> e
+You're in the Necromancer Street.
+
+  This section of the street connect some of the more interesting
+sections of the city. To the north one may enter the
+Grand Playhouse where delights for the eyes (but not hands) can be
+found. Further travel to the east will lead you to the more
+businesslike sections of the street.
+
+To the south is the archives.
+The street continues east and west.
+
+> e
+You're in the Necromancer Street
+
+  Beyond a doubt this is the most interesting section of the
+Necromancer street complex.
+
+Warring factions have littered this area with signs. Clearly
+the argument lies on whether the God depicted in the Church
+exists or whether the Atheist's are correct. Arguments
+are depicted on signs everywhere.
+
+To the north is king's road south.
+To the south is north atheist ave..
+Necromancer Street continues to both the east & west.
+
+> e
+You're in the Necromancer Street
+
+Cafe Mana is to the north.
+To the east is east entrance.
+Necromancer Street continues to the west.
+
+> who
+                     Monster Status
+                  26-FEB-1991  8:49pm
+                  * - Monster Operator
+
+Username   Game Name             Level     Class  Where
+v063j3h4   Magog                     1      Mage  south agamemnon ave
+v056mdht   xTrollmaster              2     Troll  the maze
+v051lpqa  *opp'n along               9  GameMstr  barbarian's campfire
+v059nqal   Soulcatcher               3      Mage  battered dock
+v125qqna   Hanged Man                3     Mummy  battered dock
+v999rbqh   Freeon it                 2     Troll  southern plain
+masproj1   King Kickass              1    Ranger  necromancer street
+> e
+You're at East Entrance
+
+ You have passed through the east entrance into the Wizard City.
+Here all your fantasies for power and your fears of death
+may be fulfilled. Great places of learning such as the Library
+of Ancients may teach you, the Wizard City Inn may house you,
+numerous resteraunts may feed you, shops and stores may
+provide you with all you may need, but cross not the leaders
+of the Guilds that lie in the city or Death and the graveyard may
+be your only reward for your stay in the city.
+
+There is an Alley to the north.
+There are more shops to the south.
+To the east is west bank of river.
+To the west is necromancer street.
+
+> e
+You're at West Bank of River
+
+To the north is smelt.
+To the east is the drawbridge.
+To the west is east entrance.
+
+> e
+You're at the Drawbridge
+
+The rusty iron drawbride holds your weight easily.
+
+To the east is tower base.
+To the west is west bank of river.
+
+Magog is here.
+Magog is in exceptional health.
+>
+Magog has gone west.
+>
+You feel magically energized.
+> e
+You're at Tower Base
+
+To the east is tiberius road.
+To the west is the drawbridge.
+The top of sw tower is up from here.
+
+> w
+The Drawbridge is up, King Kickass. It's coming down slowly.
+> w
+The Drawbridge is up, King Kickass. It's coming down slowly.
+> e
+You're in the Tiberius Road
+
+To the east is tiberius road.
+To the west is tower base.
+
+> hide
+There is no place to hide here.
+> lift
+Bad command.  Type ? for a list.
+> e
+You're in the Tiberius Road
+
+To the east is fountain of the gods.
+To the west is tiberius road.
+
+> ;   lift
+You have fallen through into a dark stone tunnel 
+You're in Dwarven Tunnel
+
+To the north is warrior passage.
+To the south is dwarven tunnel.
+To the west is tunnel under river.
+There is some light coming from above.
+
+> n
+You feel magically energized.
+> n
+You're in Warrior Passage
+
+To the north is warrior passage.
+To the south is dwarven tunnel.
+To the east is a royal dungeon.
+
+>
+(Magog once again roams the land.)
+xTrollmaster has been slain by Spunk the Hydra's sharp pointy teeth.
+> e
+You're in a royal dungeon
+
+To the east is the royal dungeon.
+To the west is warrior passage.
+
+> e
+You're in the royal dungeon
+
+To the north is royal dungeon.
+To the west is a royal dungeon.
+
+> n
+You're in royal dungeon
+
+To the south is the royal dungeon.
+The royal sparring room is up from here.
+
+>
+You feel magically energized.
+> u
+You're in the Royal Sparring Room
+
+This is where the great Knights of the land train for battle. The room
+is scarred with the markings of many swords and axes, leaving a permanant
+record of all of the great battles that took place here. A dark trapdoor
+is visible in one corner of the room.
+
+To the east is southeast hallway.
+The royal dungeon is down from here.
+
+>
+(Magog once again roams the land.)
+> e
+You're in the Southeast Hallway
+
+To the north is royal passageway.
+To the east is base of se tower.
+To the west is royal sparring room.
+
+> e
+You're at the Base of SE Tower
+
+To the west is southeast hallway.
+The southeast tower is up from here.
+
+>
+You feel magically energized.
+> she
+--------------- Character Sheet ------------------
+Name        :King Kickass
+Class       :Ranger
+Size        :      6'
+Exp/level   :   1315/1
+Health/Max  :   2292/2292
+Move delay  :     46/100 seconds
+Attack delay:    270/100 seconds
+Weapon usage:    104%
+Move silent :     44%
+Total Kills :      3
+Money       :     50
+Money in Bank:      70
+Weapon      :Rusty sword 160/160
+Worn armor  :5/8/4
+Mana free/used/max: 40/0/42
+--------------------------------------------------
+> 'Now
+You hear a message from Jeth the Elf: xTrollmaster is slightly wounded.
+> 'Now I have
+You hear a message from Jeth the Elf: xTrollmaster is slightly wounded.
+> 'Now I have some mana
+>
+You hear a message from Soulcatcher: Doug, come talk 
+> who
+                     Monster Status
+                  26-FEB-1991  8:52pm
+                  * - Monster Operator
+
+Username   Game Name             Level     Class  Where
+v063j3h4   Magog                     1      Mage  the maze
+v056mdht   xTrollmaster              2     Troll  battle plain
+v051lpqa  *opp'n along               9  GameMstr  west bank of river
+v059nqal   Soulcatcher               3      Mage  battered dock
+v125qqna   Hanged Man                3     Mummy  battered dock
+v999rbqh   Freeon it                 2     Troll  northeast corner
+masproj1   King Kickass              1    Ranger  base of se tower
+>
+You hear a message from Soulcatcher: I need to fix a link in the castle 
+>
+(Blizzard once again roams the land.)
+>
+You feel magically energized.
+>
+(Mhoram once again roams the land.)
+> w
+Blizzard has been slain by Cirith the Kobold's War Hammer.
+> w
+You're in the Southeast Hallway
+
+To the north is royal passageway.
+To the east is base of se tower.
+To the west is royal sparring room.
+
+> n
+You're in the Royal Passageway
+
+The hallway widens out into a larger room here. Corridors lead off into
+many directions. A stone stairway leads up. The Eastern exit open into
+a large a well lit room.
+
+To the north is northeast hallway.
+To the south is southeast hallway.
+To the east is throne room.
+To the west is royal hallway.
+The royal corridor is up from here.
+
+>
+Freeon it has been slain by a twist of fate.
+> e
+You're in the Throne Room
+
+This is a large circular room. In the center is an enormous, golden,
+jewel encrusted throne. This is where the King holds his court and hands
+out justice.
+
+To the west is royal passageway.
+The king's chambers is up from here.
+
+> u
+You're in the King's Chambers
+
+This is the King's chamber. The walls are adorned with many fine and
+wondrous treasures. The room is ornately decorated. A large tapestry lines
+one wall. It depicts the history of the Kingship and the recent history
+of the Monster realm. As you look at the tapestry you see the pictures come
+alive, twisting into new scenes.
+
+The throne room is down from here.
+
+>
+xTrollmaster has been slain by Krazool the Furie's pointed stick.
+> d
+You're in the Throne Room
+
+This is a large circular room. In the center is an enormous, golden,
+jewel encrusted throne. This is where the King holds his court and hands
+out justice.
+
+To the west is royal passageway.
+The king's chambers is up from here.
+
+> w
+You're in the Royal Passageway
+
+The hallway widens out into a larger room here. Corridors lead off into
+many directions. A stone stairway leads up. The Eastern exit open into
+a large a well lit room.
+
+To the north is northeast hallway.
+To the south is southeast hallway.
+To the east is throne room.
+To the west is royal hallway.
+The royal corridor is up from here.
+
+>
+Magog has been slain by Canawok the Unicorn's Silver Horn.
+> n
+You're in the Northeast Hallway
+
+To the south is royal passageway.
+To the east is base of ne tower.
+To the west is royal stables.
+
+> w
+You can't go that way.
+Not enough money 
+> n
+You can't go that way.
+> e
+You're at the Base of NE Tower
+
+To the west is northeast hallway.
+The northeast tower is up from here.
+
+> w
+You're in the Northeast Hallway
+
+To the south is royal passageway.
+To the east is base of ne tower.
+To the west is royal stables.
+
+> s
+You're in the Royal Passageway
+
+The hallway widens out into a larger room here. Corridors lead off into
+many directions. A stone stairway leads up. The Eastern exit open into
+a large a well lit room.
+
+To the north is northeast hallway.
+To the south is southeast hallway.
+To the east is throne room.
+To the west is royal hallway.
+The royal corridor is up from here.
+
+> w
+You're in the Royal Hallway
+
+This long hallways stretches into the heart of Castle Lamnenth.
+Torches line the walls and your footsteps echo down the long stone floor.
+
+To the east is royal passageway.
+To the west is castle entrance.
+
+> w
+You're in the Castle Entrance
+
+You have entered Castle Lamnenth. All who are not allies with the feudals
+should beware, for this castle is impenetrable and all who dare enter risk
+the wrath of it's inhabitants.
+
+To the north is base of nw tower.
+To the south is base of sw tower.
+To the east is royal hallway.
+The royal drawbridge lies between you and the lookout tower.
+The royal guard room is up from here.
+
+> w
+The Fuedal drawbridge is up, you must wait.
+> w
+The Fuedal drawbridge is up, you must wait.
+> w
+The Fuedal drawbridge is up, you must wait.
+> w
+The Fuedal drawbridge is up, you must wait.
+> w
+You're in Lookout Tower Base
+
+To the north is agamemnon avenue.
+To the south is south agamemnon ave.
+There is a drawbridge east leading to the Fuedal castle
+To the west is spartican shop.
+The the lookout tower is up from here.
+
+>
+Magog has come into the room from: north
+>
+Magog has gone south.
+> w
+You're in Spartican Shop
+
+To the east is lookout tower base.
+
+You can buy a Triple Headed Flail for 2450.
+You can buy a Two Handed Sword for 2500.
+You can buy a Morningstar for 1850.
+You can buy a Dwarven Axe for 425.
+You can buy a SoulStealer for 300.
+You can buy a Broad Sword for 250.
+You can buy a Dagger for 125.
+You can buy a Crossbow of Andurin for 375.
+You can buy a Slender Bow for 250.
+You can buy a Flintlock for 250.
+You can buy a Sharp Arrow for 20.
+You can buy a Miniball for 20.
+You can buy a Spiked shield for 1000.
+>
+Kill Me has been slain by Hanged Man's claws.
+> e
+You're in Lookout Tower Base
+
+To the north is agamemnon avenue.
+To the south is south agamemnon ave.
+There is a drawbridge east leading to the Fuedal castle
+To the west is spartican shop.
+The the lookout tower is up from here.
+
+>
+xTrollmaster has been slain by Sarek the War Horse's pair of iron shod hooves.
+> s
+You're in the South Agamemnon Ave
+
+To the north is lookout tower base.
+To the south is south agamemnon ave.
+
+>
+A beam of sunlight shoots through one of the battlements
+above you.  You feel strange for a moment.
+You now have 42 mana
+> s
+You're in the South Agamemnon Ave
+
+To the north is south agamemnon ave.
+To the south is fountain of the gods.
+
+> s
+You're at Fountain of the Gods
+
+To the north is south agamemnon ave.
+To the west is tiberius road.
+
+The dead faces of Kill Me is mirrored in the fountain.
+> l
+You're at Fountain of the Gods
+
+To the north is south agamemnon ave.
+To the west is tiberius road.
+
+The dead faces of Kill Me is mirrored in the fountain.
+> who
+                     Monster Status
+                  26-FEB-1991  8:56pm
+                  * - Monster Operator
+
+Username   Game Name             Level     Class  Where
+v063j3h4   Magog                     1      Mage  via goblina
+v056mdht   xTrollmaster              1     Troll  the western plain
+v051lpqa  *opp'n along               9  GameMstr  royal dungeon
+v065r7b7   Mhoram                    6  WatrLord  the sphinx
+v059nqal   Soulcatcher               3      Mage  royal dungeon
+v222p9ns   Kill Me                   1   Centaur  void
+v125qqna   Hanged Man                3     Mummy  via goblina
+v999rbqh   Freeon it                 1     Troll  classroom
+masproj1   King Kickass              1    Ranger  fountain of the gods
+>
+(Hanged Man has returned to sleep.)
+> who
+                     Monster Status
+                  26-FEB-1991  8:56pm
+                  * - Monster Operator
+
+Username   Game Name             Level     Class  Where
+v063j3h4   Magog                     1      Mage  via goblina
+v056mdht   xTrollmaster              1     Troll  the western plain
+v051lpqa  *opp'n along               9  GameMstr  royal dungeon
+v065r7b7   Mhoram                    6  WatrLord  necromancer street.
+v059nqal   Soulcatcher               3      Mage  royal dungeon
+v222p9ns   Kill Me                   1   Centaur  void
+v999rbqh   Freeon it                 1     Troll  classroom
+masproj1   King Kickass              1    Ranger  fountain of the gods
+> who
+                     Monster Status
+                  26-FEB-1991  8:57pm
+                  * - Monster Operator
+
+Username   Game Name             Level     Class  Where
+v063j3h4   Magog                     1      Mage  the underground bar
+v056mdht   xTrollmaster              1     Troll  northwest corner
+v051lpqa  *opp'n along               9  GameMstr  royal dungeon
+v065r7b7   Mhoram                    6  WatrLord  via goblina
+v059nqal   Soulcatcher               3      Mage  royal dungeon
+v222p9ns   Kill Me                   1   Centaur  classroom
+v999rbqh   Freeon it                 1     Troll  classroom
+masproj1   King Kickass              1    Ranger  fountain of the gods
+>
+(Ars Moriendi once again roams the land.)
+>
+(Kazzer once again roams the land.)
+> w
+You're in the Tiberius Road
+
+To the east is fountain of the gods.
+To the west is tiberius road.
+
+> whop            who
+                     Monster Status
+                  26-FEB-1991  8:57pm
+                  * - Monster Operator
+
+Username   Game Name             Level     Class  Where
+v063j3h4   Magog                     1      Mage  east entrance
+maskaz     Kazzer                    3  TrolKing  valley of nis
+v056mdht   xTrollmaster              1     Troll  northwest corner
+%MAS-W-EXTPRO, YOU HAVE LOGGED ON AGAIN(LAST NOTICE).
+v051lpqa  *opp'n along               9  GameMstr  royal dungeon
+v065r7b7   Mhoram                    6  WatrLord  necromancer street
+v059nqal   Soulcatcher               3      Mage  royal dungeon
+v222p9ns   Kill Me                   1   Centaur  hall of monsters
+v999rbqh   Freeon it                 1     Troll  classroom
+v125qqml   The Lerxster II           1    Knight  the west river bank
+masproj1   King Kickass              1    Ranger  tiberius road
+> 'Shit there is a nother uid like mo\      ine on the system
+> %MAS-I-EXTPRO, YOU HAVE LOGGED ON AGAIN.  BYE.
+
+ubvms> u mas
+      VAX/VMS User Processes at 26-FEB-1991 20:58:21.76
+    Total number of users = 3,  number of processes = 4
+
+ Username   Node     Interactive  Subprocess   Batch
+ MASKAZ    UBVMSC            1         1
+ MASPROJ1  UBVMSC            1
+ MASPROJ6  UBVMSD            1
+ubvms> Oh well
+%DCL-W-IVVERB, unrecognized command verb - check validity and spelling
+ \OH\
+ubvms> lo
+  MASPROJ1     logged out at 26-FEB-1991 20:58:43.01Connection closed by foreign host.
+mozart:/mnt/lavelle [7m> [m ^D  exit
+
+script done on Tue Feb 26 19:54:49 1991

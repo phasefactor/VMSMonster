@@ -1,0 +1,53 @@
+From: Kari.Hurtta@Helsinki.FI (Kari E. Hurtta)
+Newsgroups: vmsnet.sources.d,vmsnet.sources.games
+Subject: Monster Helsinki V 1.04 - part 00/32
+Date: 13 Jun 92 18:58:11 GMT
+Organization: University of Helsinki
+
+                         Monster Helsinki V 1.04
+                         -----------------------
+
+    Monster, a multiplayer adventure game where the players create the
+    world and make the rules.
+
+    Derived from Rich Skrenta's Monster (from version 1).
+
+    Includes programmable non-player characters (NPC) with own programming
+    language - MDL (Monster Defination Language). Also rooms and objects
+    can program with it (via so called hooks). NPCs are called to 'monster',
+    all other MDL-objects are called to 'hook'.
+
+Environment: VMS V4.x (MONSTER_INSTALL.COM requires V5.x)
+             PASCAL 
+
+New to version 1.03 (posted 24.11.1990):
+1)  Several bugfixes (of course)
+2)  New commands MONSTER/DUMP and MONSTER/BUILD (via MONSTER_DUMP.EXE)
+3)  Reading of keyboard and database polling starategy have rewrote -
+    should cause smaller IO-load to system (new GUTS.PAS).
+4)  MDL -parser now writes offending line and points error position when 
+    it detects error in MDL-program.
+
+    This distribution includes also small database for starters (Build 
+    with command MONSTER/BUILD CASTLE.DMP).
+
+    Compilation and installation - two possibility:
+1)  Compile MONSTER_E.HLP
+         $ LIBRARIAN/HELP/CREATE MONSTER_E MONSTER_E
+    Read installation help
+         $ HELP/LIBRARY=SYS$DISK:<>MONSTER_E Installation
+    and follow help.
+2)  Run installation-script
+         $ @MONSTER_INSTALL
+    and answer to questions.
+
+
+    Send notice to me (Kari.Hurtta@Helsinki.Fi) if you get this
+    working or if you have problems.
+
+- K E H
+( Kari.Hurtta@Helsinki.FI,
+  hurtta@cc.Helsinki.FI,
+  hurtta@cs.Helsinki.FI,
+  HURTTA@FINUH.BITNET
+)

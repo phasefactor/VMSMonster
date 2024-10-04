@@ -1,0 +1,1844 @@
+Monster is a text-oriented computer adventure game.  Like other traditional
+adventure games such as Zork and Adventure, Monster players issue simple
+commands to direct a "puppet" through an artificial world.  Players can
+explore the world, pick up and make use of objects, and solve puzzles.
+
+However, Monster is quite different from other computer adventures in two
+respects:  first, Monster is a multiplayer game.  In addition to the normal
+actions a player can effect on the simulated environment, players can also
+interact with one another.  Player characters can fight, talk, trade items
+and explore territory together.  Monster is similar in this respect to some
+multiplayer games available on computer networks such as the Source and
+Compuserve.
+
+However, Monster allows players to do something that very few, if any, other
+games allow:  the players themselves create the fantasy world as part of the
+game.  Players can create objects, make locations, and set up puzzles for other
+players to solve.  Game mechanisms allow players to:
+
+	o Create and describe new objects and locations
+	o Specify how game objects function
+	o Provide text descriptions for events that may happen
+
+For example, a player in Monster could create a room named "Great Hall",
+provide a textual description for it (which other players would see upon
+entering the rooms), and describe special features of the room (for instance,
+a brass plaque on the wall).
+
+Here's what another player who walked into the room described above would see
+(lines beginning with > are the player's input):
+
+  > look
+  You're in Great Hall
+  You're in the middle of a vast hall stretching out of sight to the
+  east and west.  Strange shadows play across the high vaulted ceiling.
+  The floor is set with smooth rectangular stones.  The walls feel slightly
+  cold to the touch, and damp with condensation.  A copper plaque, slightly
+  green with age, is set into one wall.
+
+  > look plaque
+
+  The plaque looks very old and corroded.   However, you can still make out
+  the writing:
+
+  " Monster, created by Rich Skrenta, 1988.  Play at your own risk. "
+
+Now the creator of the rooms could add a secret passage, perhaps hidden
+underneath some stones in the floor.  To do this, first the player would
+describe what the stones looked like, then make a hidden exit to another
+location with a special command which would activate it.  Here's what the player
+would see after making these changes:
+
+  > show details
+  Details here that you may inspect:
+      stones
+      plaque
+  > look stones
+  The stones are rough and black, and cold to the touch.  Although the
+  mortar work appears to have been expertly done, it has decayed with time.
+  Many stones are cracked, and narrow spaces fracture the carefully laid
+  pattern.  Some of the stones are quite loose.  You might be able to lift
+  one of them with some effort.
+  > lift
+  With great effort, you manage to lift the stone enough to fit inside.
+
+  Once below the stone, it falls back into place, sealing out the light
+  from above.  You squirm down the narrow tunnel . . .
+
+This example only hints at the details that actually go into the creation of a
+realistic game puzzle.  To set up a rich game location, a player would have to
+specify: 
+
+	o A textual description of the room, as well as separate descriptions
+	  for various rooms details (in the example above, the plaque and
+	  the stones are room details)
+	o A description of each of the possible exits from the rooms (there
+	  might be no description if the exit is hidden)
+	o What happens when an object is dropped at the location (for example,
+	  if a player is swimming and he drops something, the object should
+	  sink) as well as a message describing what happened to the object
+	o For each exit, a set of messages and parameters including:
+		- the name of the exit
+		- whether the exit requires a special object to pass (for
+		  example, a door key or some magic object)
+		- a message displayed to the player if he can't successfully
+		  leave through the exit (if he doesn't have the key, for
+		  instance)
+		- an optional message that the player sees when he goes
+		  through an exit (in the example above, the text "Once below
+		  the stone, it falls back into place...." is such a message)
+		- a message that players inside the room see when someone
+		  leaves through the exit
+		- a message that players inside the room see when another
+		  player enters the room through the exit
+		- miscellaneous other parameters
+
+
+
+Technical Aspects of Monster:
+-----------------------------
+
+Each player who plays the Monster game runs a separate copy of the game.  Each
+individual Monster process shares a database containing all of the information
+about the simulated world, including:
+
+	o Records describing all of the rooms, interconnections between rooms,
+	  objects, and descriptions for the above
+	o The locations of every player and object
+	o A special shared file used for interprocess communication
+
+Each of the Monster database files are organized as a linear collection
+of fixed-length records.  Monster uses the following files:
+
+	roomfile:	file of records containing data on Monster locations
+	namfile:	file containing names for objects, rooms and people
+	descfile:	file of text description blocks (10 lines maximum)
+	linefile:	file of short (one line) descriptions
+	intfile:	file of various integer parameters
+	objfile:	file of records containing data on Monster objects
+	indexfile:	file of bitmaps for the other files; used to mark
+			free/inuse records for dynamic allocation
+	eventfile:	file of records used for interprocess communication
+
+
+Record Locking:
+---------------
+
+When Monster tries to access a record in one of the shared data files, it first
+makes a read attempt on the record.  If the record is available (no other
+Monster process is reading or writing it) VMS will lock and read the record and
+return successfully.  If another process has locked the record, VMS will return
+an error condition.  In this case the Monster process will wait a small random
+amount of time and attempt to read the record again.  Then if the Monster
+program cannot successfully read and lock the record after a certain number of
+retries, it prints an error message and aborts. 
+
+In initial versions of Monster a count was kept of how many times two processes
+would "collide" when both wanted to read one record.  The random wait
+dramatically reduced this hit count.
+
+Monster's response time using this scheme is acceptable when the load on the VAX
+is not too high.  However, it does have some drawbacks.  The first is that a
+data record being read by a Monster process is locked for a short time, even if
+the process has no intention of writing to it.  Also, the collide-and-wait
+approach is somewhat crude considering VMS has extensive record locking
+facilities which are capable not only of allowing multiple-read access to a
+record but also of queueing processes desiring to write-lock a record.
+Unfortunately, the use of these facilities requires special VMS priviliges not
+available to ordinary users.
+
+
+Interprocess Communication:
+---------------------------
+
+Monster processes communicate through a shared file.  A communication from one
+process to another is referred to as an event; the shared file for communication
+is called the event file.  Two player processes will only need to communicate
+if both players are in the same location, since actions in one room won't
+affect gamers elsewhere.  However, when two or more players are in the
+same location, quite a lot of events may happen:
+
+	o Notification of entry and exit -- players in the room must see when
+	  other players come and go
+	o Notification of various actions -- such as picking up and dropping
+	  objects, taking inventory and closely examining things
+	o Messages when players talk to each other in the game
+	o Primary, target and third-party events for fighting -- the player
+	  throwing the punch sees one thing, the person being hit another,
+	  and somone else watching sees a third message.
+
+Because only player processes in the same Monster game location need to
+communicate, each room has an associated event file record.  Each event file
+record contains a circular list of events with a pointer to the most recent
+event.  When a player enters a new room, either by moving or joining the game,
+the Monster process reads the event file record for the room and makes a local
+copy of the current event pointer.  At periodic intervals, the Monster process
+will reread the event file record and compare its local pointer to the one in
+the event file.  If they are different, other player processes have logged
+events to the event record, and the Monster process will pull them off the list,
+handle them, and update its own local pointer.  When a process needs to log an
+event, it write-locks the event file record, writes a new event, and updates the
+event file pointer. 
+
+There are over sixty different events that a Monster process can initiate
+or handle; each event can be interpreted differently according to circumstances.
+For example, player A may whisper something to player B.  Suppose player C is
+also in the room.  Player A's process logs an event containing the message,
+the event type ("whisper") and the target of the whisper (player B) to the
+event file record associated with their current location.
+
+  > whisper b
+  >> Hey b, this is something I whispered to you.
+
+Player B's process will receive and handle the event:
+
+  A whispers, "Hey b, this is something I whispered to you."
+
+Player C's process will also receive and handle the event.  Usually C will only
+see A and B whispering together:
+
+  A is whispering to B.
+
+However, there is a small chance that C will overhear the message:
+
+  You overhear A whispering to B:
+    "Hey b, this is something I whispered to you."
+
+This method of interprocess communication requires that all Monster processes
+frequently read the event file to see if any events have occured.  This might
+seem less efficient than another scheme possibly using VMS mailboxes or shared
+memory.  Lack of sufficient VMS privileges prevented me from using shared
+memory.  Mailboxes might be more efficient, especially if used with the Vax's
+interrupt system.  However, several problems would be present: 
+
+	o In order to allow any process to communicate with any other,
+	  full interconnection would be necessary.  In addition, since VMS
+	  mailboxes only transmit data in one direction, n Monster processes
+	  would require 2n mailboxes.  A scheme using mailboxes would quickly
+	  exhaust process quota limits.
+
+	o It is somewhat awkward to set up mailboxes and even more difficult
+	  to inform other processes of their presence.  Once again, I believe
+	  that special VMS privileges might be necessary to do this.
+
+The event file scheme of communication has proven flexible and is fast enough
+when the VAX load is not high.
+
+
+Maintaining a Player's Existence in the Database:
+-------------------------------------------------
+
+When a user runs Monster, it first checks a playerlog to see if he has ever
+played before.  If so, the player is restored to the state he was in when he
+last played, just before issuing the QUIT command.  In the user is not found in
+the playerlog, he is started out at an initial location, somewhat in the center
+of the world. 
+
+To place a player into a location, Monster scans the room record for a free
+"person" slot to put the player's index into.  Once the player is part of
+the room record, he will be visible to other players who are also in that
+room (providing he hasn't hidden himself), and they will be able to interact
+with him.
+
+A dangerous situation occurs when a player process dies or becomes disconnected
+for some reason.  In this case, the room record shows that a certain player is
+in a location, but in fact there is no controlling Monster process for that
+player.  There will be no process to handle events directed at that player.
+This is a bad situation because they player is not obviously "dead" to the
+other Monster programs, as interprocess communication only involves sending
+an event, and does not provide for receipt acknowledgement.
+
+These "zombie" players were a serious nuisance in an early version of Monster.
+The Monster world appeared to be full of players, when in fact they were just
+ghosts left from players typing the VAX interrupt character or becoming
+disconnected from modems (Monster now inhibits the interrupt character to help
+prevent the casual creation of zombies). 
+
+There are two cases where a zombie game character may be detected:  when
+another player suspects that a game character is not being controlled by a real
+user (either from a lack of response from the game character or by checking
+the VAX user list); or when the player who created the zombie character attempts
+to play Monster again (only one player per account is allow to play Monster
+at a time, so if a player tries to enter Monster and also appears to be
+currently playing the game, either 1) two players on one account are trying
+to play Monster at the same time, or 2) the player character that appears
+to be currently playing Monster is really a zombie).
+
+To handle the first case, when one player suspects another of being a zombie,
+the player can issue the PING command.  PING sends repeated events directed at
+the suspected zombie, with short pauses between the sends.  If PING does not
+receive a response within a certain amount of time (currently about three
+seconds) it attempts to smoothly return the zombie character to the "inactive"
+(not playing) state.  This involves taking every object the player character was
+holding and dropping them on the ground, updating the "time of last play" record
+and modifying the playerlog to show that the player is not currently playing. 
+
+In the second case, when no other player has PINGed away the zombie and the
+original player (the one responsible for the zombie character) attempts to
+reenter Monster, Monster will inform him: 
+
+	There may have been some trouble the last time you played.
+	Trying to fix it . . .
+
+At this point, Monster itself attempts to PING the player's character.  If
+two people on the same account are trying to play Monster at the same time
+the PING will be answered and Monster will not let the second player into
+the game.  Otherwise, the player will enter Monster normally after a short
+pause:
+
+	All should be fixed now.
+
+	Welcome back, Faust.  Your last play was on 13-MAY-1988 at 8:31pm.
+
+Even with this solution, there are still situations where trouble can arise with
+zombie characters.  For example, suppose a player is on a modem playing Monster
+and becomes disconnected.  Another player PINGs away the zombie character.  The
+dialup player calls up the VAX again, and reconnects to his disconnected
+process.  Now his Monster process still thinks the player character is alive in
+the room (it has no knowledge of the disconnect) but the database shows that the
+player is inactive.
+
+If only a few events have been logged in the associated event file record, the
+reconnnected Monster process will notice the fatal PING to itself (lingering in
+the event file record) and will abort.  However, if many events have occured
+while the process was disconnected, it will not be aware of the change to the
+database. This will leave the database in an inconsistent state until the player
+QUITs the game.  Fortunately, when the player quits the database will be fixed. 
+
+Since this problem will eventually correct itself (when the player quits) and
+because checking for this very rare situation would slow response time
+considerably (Monster would have to verify its existence in the database
+continuously) I decided to ignore this exception.
+
+I had originally hoped for a smoother solution to the "disconnected player"
+problem.  In a system where a central process drives all of the player
+terminals, this is possible.  However, because control in Monster is shared
+between many identical processes, the problem is much harder.
+
+
+Reflections on the Project:
+---------------------------
+
+How the "Installed Base" Stagnated New Development:
+---------------------------------------------------
+
+During the development of Monster I would periodically change the records
+that held the Monster database.  Once changed in the program, this would render
+the existing database unusable, as the new program could no longer open the old
+files.  Thus, I would have to destroy the existing world if I wanted to add
+any fields to the records that comprised the shared files.
+
+In order to provide a stable environment for players who did not want to see
+their hard work making Monster rooms destroyed every time I made a change to the
+structure of the database, I installed a version with a separate set of data
+files than the copy I worked on for development.  Players created rooms and
+tested the installed version, while I continued to develop my own copy.
+Eventually, the world in the first release of Monster had about 60 rooms. 
+
+About a month after installing the original Monster I replaced it with the new,
+greatly enhanced version I had been working on (the executable was about 4 times
+the size of the original) and started over with an empty world.  I had provided
+expansion fields in the data records for the new release of Monster so I could
+continue to develop the game without having to work on my own private copy. 
+
+The second release of Monster was very popular.  I continued to add features to
+the program, and made use of the expansion fields when possible.  However, I
+felt more and more constrained by the limits of my database.  I needed to
+change more about the data records than the expansion fields would allow.
+I wanted to erase the world a second time; however, players had put much work
+into creating over 100 rooms, and became quite angry when I suggested that I
+might throw away the current world to make a new one.
+
+Some suggested that I write a program which would convert the existing database
+to a new format.  However, I felt that the work to do this would be much greater
+than the work I was planning to spend to make enhancements to the game. Also,
+the style of my changes during development called for small frequent changes. I
+abandoned the idea of trying to write a translation program, and instead
+attempted to work around the limitations of the database structure.  Eventually,
+however, my work stagnated, and new development on Monster ceased. 
+
+I never anticipated the work of my playtesters holding back further development.
+If I were to rewrite Monster, I would use a more flexible storage approach, one
+probably involving a form of dynamic typing which would let me add new
+parameters to the database without actually changing the record structure or
+size. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+Appendix A:  Specifyable Parameters for Monster Locations and Objects
+---------------------------------------------------------------------
+
+Rooms:
+------
+
+nicename:	the name of the room
+nameprint:	formatting control for the nicename
+primary,
+secondary:	textual descriptions of the room
+which:		control for which room description prints:
+			0 - only print primary room description
+			1 - only print secondary room description
+			2 - print both primary and secondary room descriptions
+			3 - print primary description; then print secondary
+			    description if the player is holding the specified
+			    magic object for the room
+magicobj:	the magic object for the room
+trapto,
+trapchance:	allows a player to semi-randomly be thrust through an exit
+rndmsg:		eerie message that randomly prints
+details:	details that may be looked at in the room
+
+
+Exits:
+------
+
+toloc:		where the exit goes
+kind:		type of the exit:
+			0 - no exit; always fails
+			1 - open exit; always succeeds
+			2 - exits succeeds if player has key object
+			3 - exit fails if player has key object
+			4 - exit randomly fails
+			5 - potential exit; doesn't exist yet
+			7 - exit cycles between being open and closed
+exitdesc:	short textual descrption of the exit
+fail:		description if player fails to go through exit
+success:	description if player succeeds to go through exit
+goin:		what other players see when someone goes into the exit
+comeout:	what others see when a player comes out of the exit
+hidden:		what the player sees when he finds the exit (if it's hidden)
+objreq:		key object for exit
+alias:		name of the exit
+reqverb:	requires the player to use the alias only (without "go") to
+		use the exit
+reqalias:	requires the player to know the exit alias; can't use the
+		compass point
+autolook:	surpresses the automatic "look" done upon entering the
+		new room
+
+Objects:
+--------
+
+oname:		the name of the object
+kind:		type parameter for the object
+linedesc:	short description of the object (the "on the floor" description)
+examine:	close inspection description for the object
+numexist:	how many copies of the object exist
+sticky:		inhibits players from being able to pick up the object
+getobjreq:	requires the player to be holding another object before
+		he can pick up this one
+getfail:	message printed if a player fails to get an object
+getsuccess:	message printed when an object is successfully picked up
+useobjreq:	object player must be holding to use this object
+uselocreq:	place player must be in to use this object
+usefail:	message printed if player fails in use of the object
+usesuccess:	message printed if object is successfully used
+usealias:	alias word to "use"
+reqalias:	require player to know the alias to use the object
+article:	whether "a", "an", "some", "the" should precede the object name
+
+
+Appendix B:  Monster Command List
+---------------------------------
+
+Accept/Refuse #  Allow others to Link an exit here at direction # | Undo Accept
+Brief            Toggle printing of room descriptions
+Customize [#]    Customize this room | Customize exit # | Customize object #
+Describe [#]     Describe this room | Describe a feature (#) in detail
+Destroy #        Destroy an instance of object # (you must be holding it)
+Duplicate #      Make a duplicate of an already-created object.
+Form/Zap #       Form a new room with name # | Destroy room named #
+Get/Drop #       Get/Drop an object
+#,Go #           Go towards # (Some: N/North S/South E/East W/West U/Up D/Down)
+Health           Show how healthy you are
+Hide/Reveal [#]  Hide/Reveal yoursef | Hide object (#)
+I,Inventory      See what you or someone else is carrying
+Link/Unlink #    Link/Unlink this room to/from another via exit at direction #
+Look,L [#]       Look here | Look at something or someone (#) closely
+Make #           Make a new object named #
+Name #           Set your game name to #
+Players          List people who have played Monster
+Punch #          Punch person #
+Quit             Leave the game
+Relink           Move an exit
+Rooms            Show information about rooms you have made
+Say, ' (quote)   Say line of text following command to others in the room
+Search           Look around the room for anything hidden
+Self #           Edit a description of yourself | View #'s self-description
+Show #           Show option # (type SHOW ? for a list)
+Unmake #         Remove the form definition of object #
+Use #            Use object #
+Wear #           Wear the object #
+Wield #          Wield the weapon #;  you must be holding it first
+Whisper #        Whisper something (prompted for) to person #
+Who              List of people playing Monster now
+Whois #          What is a player's username
+?,Help           This list
+. (period)       Repeat last command
+
+
+Appendix C:  Customization Subsystem Menus
+------------------------------------------
+
+Room Customization:
+-------------------
+
+Custom> ?
+
+D       Alter the way the room description prints
+N       Change how the room Name prints
+P       Edit the Primary room description [the default one] (same as desc)
+S       Edit the Secondary room description
+X       Define a mystery message
+
+G       Set the location that a dropped object really Goes to
+O       Edit the object drop description (for drop effects)
+B       Edit the target room (G) "bounced in" description
+
+T       Set the direction that the Trapdoor goes to
+C       Set the Chance of the trapdoor functioning
+
+M       Define the magic object for this room
+R       Rename the room
+
+V       View settings on this room
+E       Exit (same as quit)
+Q       Quit (same as exit)
+?       This list
+
+
+Exit customization:
+-------------------
+
+Custom [direction]> ?
+
+A       Set an Alias for the exit
+C       Conceal an exit
+D       Edit the exit's main Description
+E       EXIT custom (saves changes)
+F       Edit the exit's failure line
+I       Edit the line that others see when a player goes Into an exit
+K       Set the object that is the Key to this exit
+L       Automatically look [default] / don't look on exit
+O       Edit the line that people see when a player comes Out of an exit
+Q       QUIT Custom (saves changes)
+R       Require/don't require alias for exit; ignore direction
+S       Edit the success line
+T       Alter Type of exit (passage, door, etc)
+V       View exit information
+X       Require/don't require exit name to be a verb
+?       This list
+
+
+Object Customization:
+---------------------
+
+Custom object> ?
+
+A       "a", "an", "some", etc.
+D       Edit a Description of the object
+F       Edit the GET failure message
+G       Set the object required to pick up this object
+1       Set the get success message
+K       Set the Kind of object this is
+L       Edit the label description ("There is a ... here.")
+P       Program the object based on the kind it is
+R       Rename the object
+S       Toggle the sticky bit
+
+U       Set the object required for use
+2       Set the place required for use
+3       Edit the use failure description
+4       Edit the use success description
+V       View attributes of this object
+
+X       Edit the extra description
+5       Edit extra desc #2
+E       Exit (same as Quit)
+Q       Quit (same as Exit)
+?       This list
+
+
+Appendix D:  Monster Playerlist as of June 5, 1988
+--------------------------------------------------
+
+dolpher       ! Monster Manager        5-JUN-1988  1:48pm * great baths
+dasun_c       ! Iceman                 4-JUN-1988 10:30pm * the transporter room
+kirsten       ! Kirsten                4-JUN-1988 11:20pm * ffoirefirma
+isakson       ! Satan                  3-JUN-1988 10:13am * satan's private hell
+tlb05405      ! Tlb05405               3-JUN-1988 11:59am * east hall
+nate          ! Smaug                  3-JUN-1988  7:41pm * platform 1
+skrenta       ! Faust                  3-JUN-1988  8:37pm * tower room
+gary          ! Monster Vice Manager   2-JUN-1988  9:50pm * inner office
+laura         ! Laura                  2-JUN-1988 10:36pm * turbolift chamber
+james         ! James                  1-JUN-1988  7:54pm * chuk's elevator
+chuk          ! SoulStorm              1-JUN-1988  9:57pm * east hall
+peter_t       ! Peter_t               31-MAY-1988  8:33pm * pine forest
+cary          ! Cary                  31-MAY-1988 11:20pm * maelstrom
+francisco     ! Prof. Anthrax         30-MAY-1988  3:54pm * waterbed
+sundeep       ! Sundeep               29-MAY-1988  2:21pm * mta office
+bkc04916      ! Cheekster             28-MAY-1988 10:51am * the 'ell stop
+ktl04905      ! Corwin                28-MAY-1988 11:44am * west hall
+perry         ! Bufu Master!!!        28-MAY-1988  8:40pm * pinkie's place
+maryahn       ! pinkie                27-MAY-1988 12:39pm * the sewer tunnel
+immell        ! hurricane eye         26-MAY-1988  2:25am * post office 3
+robert        ! Hungry Wolf           26-MAY-1988  2:26am * roll6
+linda         ! linlop                26-MAY-1988 10:47am * terminal room
+jeff          ! Pringle               25-MAY-1988  7:12pm * ic
+mic00229      ! Mic00229              22-MAY-1988  8:33pm * great hall
+jeffoire      ! Ffoire Zen Salad      20-MAY-1988  1:41pm * bar
+schroder      ! Schroder              19-MAY-1988 10:09am * burrow
+lunde         ! Purple Peril          18-MAY-1988 12:55pm * cloud 9.5
+pib           ! Great Pib             17-MAY-1988 11:51pm * great pib's lair
+ahrens        ! it                    15-MAY-1988  4:56pm * landing
+mborsetti     ! Mborsetti             12-MAY-1988 10:20pm * sewer crossroads
+brian         ! Mr. Raven             11-MAY-1988 11:24am * a damp and dark hole
+wen05563      ! Gary                  11-MAY-1988  9:00pm * great hall
+jimbo         ! Jimbo                  8-MAY-1988 10:02pm * great hall
+lentz         ! Lentz                  7-MAY-1988  8:24am * front of isp noyes
+miller        ! Mungus                 5-MAY-1988  1:14pm * starbase
+otto          ! Otto                   4-MAY-1988  8:45pm * heidi's nightmare
+chris         ! House Manager          3-MAY-1988  3:54am * home base
+liao          ! Liao                  30-APR-1988  1:21pm * white house
+chaz          ! Chaz                  29-APR-1988  4:05pm * post office 2
+jmc           ! Run JMC               29-APR-1988  4:37pm * isp heaven
+rod           ! Rod                   29-APR-1988  9:00pm * great hall
+choi          ! Choi                  28-APR-1988  8:25pm * east hall
+bo            ! God                   26-APR-1988  1:58pm * great hall
+jonathan      ! Jonathan              26-APR-1988  5:26pm * eye of the hurricane
+swift         ! Swift                 26-APR-1988  8:53pm * post office hall
+ric05787      ! Deadhead              26-APR-1988 10:57pm * nightmarish room
+mccoy         ! The Scribe            26-APR-1988 11:41pm * scribe home
+g_wenslow     ! Gary II               24-APR-1988 11:58pm * east hall
+kri04333      ! Kri04333              18-APR-1988 12:11am * great hall
+dissett       ! Kronos                18-APR-1988 10:13pm * kronos' room
+wantz         ! Wantz                 17-APR-1988  2:51pm * great hall
+cheezer       ! Cheezer               16-APR-1988  7:55pm * the pine forest
+ahr04465      ! Ivo                   16-APR-1988  7:56pm * sewer transport
+joey          ! geek                  15-APR-1988  8:03pm * forest crossroads
+wargaski      ! Wargaski              14-APR-1988  4:01pm * toxicated
+eric          ! Eric                  13-APR-1988  3:51pm * the hall of chuk
+rwc00220      ! Rwc00220              12-APR-1988  1:32pm * great hall
+kstull        ! Kstull                12-APR-1988  5:01pm * post office 3
+tim           ! Tim                   11-APR-1988  8:26pm * great hall
+sean          ! Sean                  10-APR-1988  4:27pm * great hall
+sam           ! Sam                   10-APR-1988 12:54pm * great hall
+dean          ! Artagel                9-APR-1988  8:21am * turbolift chamber
+supercom      ! Cursor                 8-APR-1988 12:00am * forest paths
+anne          ! Anne                   7-APR-1988  6:55pm * great hall
+lisa          ! Lisa                   7-APR-1988  6:56pm * great hall
+mouse         ! Mouse                  3-APR-1988 11:26pm * west hall
+mca04477      ! Mca04477               2-APR-1988  8:56pm * burrow
+sajiv         ! Sajiv                 30-MAR-1988  6:06pm * great hall
+chad          ! Chad                  30-MAR-1988  6:37pm * chuk's elevator
+jennifer      ! Jennifer              30-MAR-1988  7:22pm * east hall
+lasonia       ! Lasonia               29-MAR-1988 11:22am * west hall
+brian_t       ! Brian_t               29-MAR-1988 11:59am * maelstrom
+mikk          ! Random                29-MAR-1988 11:19pm * ledge
+topher        ! Topher                28-MAR-1988  1:19pm * great hall
+spectre       ! Ghost in the machine  28-MAR-1988 11:43pm * ghost's mailroom
+dave          ! Dave                  18-MAR-1988 10:14am * post office hall
+penguins      ! Penguins Amok         18-MAR-1988 11:52pm * chuk's elevator
+lawson        ! Space Cowboy          18-MAR-1988 12:23pm * great hall
+heidi         ! Heidi                 17-MAR-1988  1:11am * digital purgatory
+bueno         ! Bueno                 17-MAR-1988  7:49pm * post office hall
+dan           ! Grando                16-MAR-1988  8:18am * eye of the hurricane
+eric_yue      ! Samsok                16-MAR-1988  9:29pm * the yueguy's joint
+cra01453      ! Cra01453              15-MAR-1988  3:01am * great hall
+adam          ! Adam                  14-MAR-1988  6:45pm * round room
+was04906      ! Milt                  14-MAR-1988  9:48pm * great hall
+watson        ! Watson                14-MAR-1988 10:22pm * chuk's elevator
+brianw        ! Brianw                12-MAR-1988         * ffoirefirma
+mike          ! Mike                  12-MAR-1988         * toxicated
+predator      ! Predator              12-MAR-1988         * east hall
+daniel        ! Daniel                11-MAR-1988         * west hall
+dav08345      ! Dav08345              11-MAR-1988         * great hall
+vlahos        ! otis                  11-MAR-1988         * post office
+ginter        ! Ginter                10-MAR-1988         * living room
+rob09549      ! Rob09549               9-MAR-1988         * great hall
+dora          ! Dora                   8-MAR-1988         * toxicated
+kim           ! kim                    8-MAR-1988         * post office 2
+michael       ! Prabdib                7-MAR-1988         * tunnel of love
+bradley       ! Bradley               29-FEB-1988         * eye of the hurricane
+john          ! Raunchmeister         29-FEB-1988         * underhall
+melvin        ! Killer Melvin         27-FEB-1988         * chuk's elevator
+cliff         ! Cliff                 26-FEB-1988         * east hall
+
+
+Appendix E:  An Actual Monster Game Log
+---------------------------------------
+
+$ monster
+Welcome to Monster!  Hit return to start:
+
+Welcome back, Faust.  Your last play was on 1-JUN-1988 at 10:47pm.
+
+You're in Great Hall
+You're in the middle of a vast hall stretching out of sight to the
+east and west.  Strange shadows play across the high vaulted ceiling.
+The floor is set with smooth rectangular stones.  The walls feel slightly
+cold to the touch, and damp with condensation.  A copper plaque, slightly
+green with age, is set into one wall.
+
+Monster Manager is here.
+>
+Monster Manager vanishes in a brilliant burst of multicolored light.
+> l
+You're in Great Hall
+You're in the middle of a vast hall stretching out of sight to the
+east and west.  Strange shadows play across the high vaulted ceiling.
+The floor is set with smooth rectangular stones.  The walls feel slightly
+cold to the touch, and damp with condensation.  A copper plaque, slightly
+green with age, is set into one wall.
+
+>
+Monster Manager appears in a brilliant burst of multicolored light.
+> who
+                   Monster Status
+                 1-JUN-1988 10:48pm
+
+Username        Game Name                 Where
+dolpher         Monster Manager           great hall
+skrenta         Faust                     great hall
+> look plaque
+
+The plaque looks very old and corroded.   However, you can still make out
+the writing:
+
+ " Monster, created by Rich Skrenta, 1988.  Play at your own risk. "
+
+> show details
+Details here that you may inspect:
+    stones
+    plaque
+> look stones
+The stones are rough and black, and cold to the touch.  Although the
+mortar work appears to have been expertly done, it has decayed with time.
+Many stones are cracked, and narrow spaces fracture the carefully laid
+pattern.  Some of the stones are quite loose.  You might be able to lift
+one of them with some effort.
+>
+Monster Manager is looking at the stones.
+>
+Monster Manager is looking at the plaque.
+>
+Monster Manager says, "Hey Faust, let's go down to the Underhall."
+>
+Monster Manager manages to lift a stone in the floor and descends.
+> lift
+With great effort, you manage to lift the stone enought to fit inside.
+
+Once below the stone, it falls back into place, sealing out the light
+from above.  You squirm down the narrow tunnel . . .
+
+You're in UnderHall
+This is a cramped, humid room beneath the Great Hall.  The walls are
+dripping with water condensed from mist rising from the baths.  Some
+of the mist follows the ceiling and dissappears up the narrow tunnel.
+
+Stairs lead north down to the Great Baths.
+A neon sign flashes "Great PIB's Lair" over a door to the South.
+You could manage a crawl through a narrow tunnel leading upwards.
+
+Monster Manager is here.
+> look Monster Manager
+Monster Manager is the stereotype of a computer hacker.  He is wearing
+a flannel shirt with several snickers bars in the breast pocket.  On
+his belt is an ASCII-HEX conversion chart.  On his feet are a scuffed
+pair of hiking boots so he can tackle those dangerous mountains that
+crop up in operations.  Also dangling from his belt is a battered box
+with many buttons on the front and wires with sockets on the ends protruding
+from the back.  The switches seem to have been placed haphazardly, but
+the object is unmistakably one of great power nonetheless.
+
+Monster Manager is in perfect health.
+Monster Manager is empty handed.
+>
+Monster Manager is looking at you.
+>
+Monster Manager swings at you but misses.
+>
+You duck in time to avoid Monster Manager's punch.
+>
+You see stars as Monster Manager bashes you in the face.
+>
+You parry Monster Manager's attack.
+> punch Monster Manager
+You can't punch the Monster Manager.
+> l
+You're in UnderHall
+This is a cramped, humid room beneath the Great Hall.  The walls are
+dripping with water condensed from mist rising from the baths.  Some
+of the mist follows the ceiling and dissappears up the narrow tunnel.
+
+Stairs lead north down to the Great Baths.
+A neon sign flashes "Great PIB's Lair" over a door to the South.
+You could manage a crawl through a narrow tunnel leading upwards.
+
+Monster Manager is here.
+> n
+You're in Great Baths
+These are the luxurious Great Baths where tired adventurers may come
+to relax and try to regain their health and youth from the mineral waters.
+From where you stand at the entrance, you can see below you the bubbling
+soapy pools of water churning violently in tile-lined pits.  The pools
+are fed by hot springs from deep in the rock beneath you.  Steam and
+huge soapy bubbles rise out of the hot pools of water.  The bubbles
+dance through the air, climbing higher and higher, until they either
+burst on the sharp walls of the cave or are lost in the mist above you.
+
+Shallow tiled steps, wet and slick from the hot soapy waters of the
+springs, lead down to the pools.
+
+Rough stone stairs lead up to the south.
+
+>
+In an explosion of orange smoke Monster Vice Manager poofs into the room.
+>
+Monster Manager has come down the stairs from the Underhall.
+>
+Monster Vice Manager produces a "who" list and reads it.
+> system
+System> v
+
+               used   free   total
+Block file    1008     92    1100
+Line file     1501    109    1610
+Room file      283     27     310
+Object file    139     41     180
+Integer file     6      0       6
+
+System>
+Monster Vice Manager is in system maintenance mode.
+System> exit
+>
+Monster Vice Manager is no longer in system maintenance mode.
+> 'Hey Gary
+>
+Monster Vice Manager says, "Hi, Faust."
+> look Monster Vice Manager
+The Monster Vice Manager is dressed in a conservative three piece
+suit.  The stern expression on his face is just a facade, he really
+is a warm and sensitive guy underneath.  He is willing to answer
+any questions and help out with any problems.  He can best be
+described by the phrase:
+
+            "Do what thou wilt, so mete it be."
+
+He returns your gaze with a hint of understanding and amusement.
+
+Monster Vice Manager is in perfect health.
+Monster Vice Manager is empty handed.
+>
+Monster Vice Manager is looking at you.
+> punch Monster Vice Manager
+You swing wild and miss.
+> .
+Monster Vice Manager ducks and avoids your punch.
+> .
+A quick punch, but it only grazes Monster Vice Manager.
+>
+You only feel the breeze as Monster Vice Manager swings wildly.
+> .
+You swing wild and miss.
+>
+You see stars as Monster Vice Manager bashes you in the face.
+>
+You only feel the breeze as Monster Vice Manager swings wildly.
+> .
+You deliver a quick jab to Monster Vice Manager's jaw.
+>
+Monster Vice Manager's swing misses you by a yard.
+> .
+Your roundhouse blow sends Monster Vice Manager reeling.
+>
+You double over after Monster Vice Manager lands a mean jab to your stomach!
+Monster Vice Manager looks a little dazed.
+>
+Monster Vice Manager vanishes from the room in a cloud of orange smoke.
+> who
+                   Monster Status
+                 1-JUN-1988 10:56pm
+
+Username        Game Name                 Where
+dolpher         Monster Manager           great baths
+skrenta         Faust                     great baths
+gary            Monster Vice Manager      inner office
+> poof inner office
+
+This rooms is a conservatively decorated office.  A large
+desk dominates the room.  Several pictures hang on the walls
+and a silver service is on a stand off to the left.  Two plush
+chairs beckon for you to sit down.
+
+There are stairs leading down.
+
+Monster Vice Manager is here.
+Monster Vice Manager looks a little dazed.
+> sh det
+Details here that you may inspect:
+    bin
+    plaque
+    pictures
+    stand
+> look bin
+
+The bin has a sign on it saying, "Leave mail for the Monster
+Vice Manager here.  Thank you."
+
+> look plaque
+
+The plaque reads:
+
+         Gary Wenslow, Monster Vice Manager
+
+> look pictures
+
+These are very nice pictures of landscapes.  They look expensive.
+
+> look stand
+
+The silver service on this stand is of fine workmanship.
+There are also crystal goblets and flasks containing very
+fine wine, brandy, and whiskey.
+
+> l
+
+This rooms is a conservatively decorated office.  A large
+desk dominates the room.  Several pictures hang on the walls
+and a silver service is on a stand off to the left.  Two plush
+chairs beckon for you to sit down.
+
+There are stairs leading down.
+
+Monster Vice Manager is here.
+Monster Vice Manager looks a little dazed.
+> rooms gary
+gary:
+    tunnel of love            more tunnel of love       end of tunnel
+    hot dog stand             picnic                    window
+    mvm office                inner office              hall1
+    hall2                     hall3                     hall4
+    hall5                     hall6                     hall7
+    hall8                     hall9                     concession
+    roll1                     roll2                     roll3
+    roll4                     roll5                     roll6
+    roll7                     roll8                     roll9
+    roll10                    worker's ledge            railing
+    rope                      mvm mail room
+
+> rooms dolpher
+dolpher:
+    void                      pit of fire               underhall
+    great baths               pools                     in the pool
+    in the bubble             higher bubble             highest bubble
+    ledge                     tower ledge               circular staircase
+    behind house              kitchen                   living room
+    bottom of stairs          manager's mailbox         tower room
+    on the scaffolding        round room                mountain pass
+    roof of tower             west passageway           castle entrance
+    center hall               outside the gate          east passageway
+    narrow passage
+
+> poof behind house
+You're at Behind House
+The back door of the house is boarded up, but the windows have not been
+blocked.  One window at ground level leads into what appears to be the
+kitchen.  All of the other windows are too far above the ground for you
+to reach.
+
+A path leads west to the front of the house.
+
+> form Study
+> poof studty
+There is no room named studty.
+> poof study
+You're in Study
+
+A note on the east wall says "Your exit here."
+
+> refuse east
+Exits east will be refused.
+> l
+You're in Study
+
+> desc
+[ Editing the primary room description ]
+Enter text.  Terminate with ** at the beginning of a line.
+You have 10 lines maximum.
+
+ 1: This is a luxurious study walled with fine oak paneling.  A window
+ 2: looks out of the east wall.  It is surrounded by purple curtains.
+ 3: There is a small sign on the wall.
+ 4: **
+
+* e
+> l
+You're in Study
+This is a luxurious study walled with fine oak paneling.  A window
+looks out of the east wall.  It is surrounded by purple curtains.
+There is a small sign on the wall.
+
+> desc sign
+[ Editing detail "sign" of this room ]
+Enter text.  Terminate with ** at the beginning of a line.
+You have 10 lines maximum.
+
+ 1: The note seems to have been hurriedly scrawled.  It reads:
+ 2:
+ 3:    "  This room for demonstration purposes only!  "
+ 4:
+ 5: **
+
+* ?
+
+A       Append text to end
+C       Check text for correct length with parameter substitution (#)
+D #     Delete line #
+E       Exit & save changes
+I #     Insert lines before line #
+P       Print out description
+Q       Quit: THROWS AWAY CHANGES
+R #     Replace text of line #
+Z       Zap all text
+@       Throw away text & exit with the default description
+?       This list
+
+
+* p
+
+ 1: The note seems to have been hurriedly scrawled.  It reads:
+ 2:
+ 3:    "  This room for demonstration purposes only!  "
+ 4:
+
+* e
+> sh det
+Details here that you may isspect:
+    sign
+> look sign
+The note seems to have been hurriedly scrawled.  It reads:
+
+   "  This room for demonstration purposes only!  "
+
+> l
+You're in Study
+This is a luxurious study walled with fine oak paneling.  A window
+looks out of the east wall.  It is surrounded by purple curtains.
+There is a small sign on the wall.
+
+> desc sign
+[ Editing detail "sign" of this room ]
+
+* i 1
+1:
+2: **
+
+* p
+
+ 1:
+ 2: The note seems to have been hurriedly scrawled.  It reads:
+ 3:
+ 4:    "  This room for demonstration purposes only!  "
+ 5:
+
+* e
+> look sign
+
+The note seems to have been hurriedly scrawled.  It reads:
+
+   "  This room for demonstration purposes only!  "
+
+> l
+You're in Study
+This is a luxurious study walled with fine oak paneling.  A window
+looks out of the east wall.  It is surrounded by purple curtains.
+There is a small sign on the wall.
+
+> form Behind the Curtains
+> link west
+Hit return alone at any prompt to terminate exit creation.
+
+Room to link to? behind the curtains
+Exit comes out in target room
+from what direction? east
+Exit created.  Use CUSTOM west to customize your exit.
+> l
+You're in Study
+This is a luxurious study walled with fine oak paneling.  A window
+looks out of the east wall.  It is surrounded by purple curtains.
+There is a small sign on the wall.
+
+There is a passage leading west.
+
+> custom west
+Customizing west exit
+If you would rather be customizing this room, type CUSTOM with no arguments
+If you would rather be customizing an object, type CUSTOM <object name>
+
+Type ** for any line to leave it unchanged.
+Type return for any line to select the default.
+
+Custom west> ?
+
+A       Set an Alias for the exit
+C       Conceal an exit
+D       Edit the exit's main Description
+E       EXIT custom (saves changes)
+F       Edit the exit's failure line
+I       Edit the line that others see when a player goes Into an exit
+K       Set the object that is the Key to this exit
+L       Automatically look [default] / don't look on exit
+O       Edit the line that people see when a player comes Out of an exit
+Q       QUIT Custom (saves changes)
+R       Require/don't require alias for exit; ignore direction
+S       Edit the success line
+T       Alter Type of exit (passage, door, etc)
+V       View exit information
+X       Require/don't require exit name to be a verb
+?       This list
+
+Custom west> a
+Alternate name for the exit? curtains
+Custom west> r
+The alias for this exit will be required to reference it.
+Custom west> d
+Enter a one line description of the exit.
+
+Type ** to leave line unchanged, * to make [no line]
+*
+Custom west> exit
+> l
+You're in Study
+This is a luxurious study walled with fine oak paneling.  A window
+looks out of the east wall.  It is surrounded by purple curtains.
+There is a small sign on the wall.
+
+> go curtains
+You're in Behind the Curtains
+
+There is a passage leading east.
+A note on the floor says "Your exit here."
+
+> e
+You're in Study
+This is a luxurious study walled with fine oak paneling.  A window
+looks out of the east wall.  It is surrounded by purple curtains.
+There is a small sign on the wall.
+
+> desc window
+[ Editing detail "window" of this room ]
+Enter text.  Terminate with ** at the beginning of a line.
+You have 10 lines maximum.
+
+ 1  You see a green lawn shaded by tall trees and bordered with sculptured
+ 2: shrubbery.  A small rabbit is nibbling at some grass.  The entire
+ 3: scene has an artificial look, as if it were some cartoon rendering.
+ 4: **
+
+* exit
+> sh det
+Details here that you may inspect:
+    sign
+    window
+> look window
+You see a green lawn shaded by tall trees and bordered with sculptured
+shrubbery.  A small rabbit is nibbling at some grass.  The entire
+scene has an artificial look, as if it were some cartoon rendering.
+> quit
+You vanish in a brilliant burst of multicolored light.
+$
+
+Appendix B:  Monster Command List
+
+Accept/Refuse #  Allow others to Link an exit here at direction # | Undo Accept
+Brief            Toggle printing of room descriptions
+Customize [#]    Customize this room | Customize exit # | Customize object #
+Describe [#]     Describe this room | Describe a feature (#) in detail
+Destroy #        Destroy an instance of object # (you must be holding it)
+Duplicate #      Make a duplicate of an already-created object.
+Form/Zap #       Form a new room with name # | Destroy room named #
+Get/Drop #       Get/Drop an object
+#,Go #           Go towards # (Some: N/North S/South E/East W/West U/Up D/Down)
+Health           Show how healthy you are
+Hide/Reveal [#]  Hide/Reveal yoursef | Hide object (#)
+I,Inventory      See what you or someone else is carrying
+Link/Unlink #    Link/Unlink this room to/from another via exit at direction #
+Look,L [#]       Look here | Look at something or someone (#) closely
+Make #           Make a new object named #
+Name #           Set your game name to #
+Players          List people who have played Monster
+Punch #          Punch person #
+Quit             Leave the game
+Relink           Move an exit
+Rooms            Show information about rooms you have made
+Say, ' (quote)   Say line of text following command to others in the room
+Search           Look around the room for anything hidden
+Self #           Edit a description of yourself | View #'s self-description
+Show #           Show option # (type SHOW ? for a list)
+Unmake #         Remove the form definition of object #
+Use #            Use object #
+Wear #           Wear the object #
+Wield #          Wield the weapon #;  you must be holding it first
+Whisper #        Whisper something (prompted for) to person #
+Who              List of people playing Monster now
+Whois #          What is a player's username
+?,Help           This list
+. (period)       Repeat last command
+
+
+Appendix C:  Customization Subsystem Menus
+
+Room Customization:
+-------------------
+
+Custom> ?
+
+D       Alter the way the room description prints
+N       Change how the room Name prints
+P       Edit the Primary room description [the default one] (same as desc)
+S       Edit the Secondary room description
+X       Define a mystery message
+
+G       Set the location that a dropped object really Goes to
+O       Edit the object drop description (for drop effects)
+B       Edit the target room (G) "bounced in" description
+
+T       Set the direction that the Trapdoor goes to
+C       Set the Chance of the trapdoor functioning
+
+M       Define the magic object for this room
+R       Rename the room
+
+V       View settings on this room
+E       Exit (same as quit)
+Q       Quit (same as exit)
+?       This list
+
+
+Exit customization:
+-------------------
+
+Custom [direction]> ?
+
+A       Set an Alias for the exit
+C       Conceal an exit
+D       Edit the exit's main Description
+E       EXIT custom (saves changes)
+F       Edit the exit's failure line
+I       Edit the line that others see when a player goes Into an exit
+K       Set the object that is the Key to this exit
+L       Automatically look [default] / don't look on exit
+O       Edit the line that people see when a player comes Out of an exit
+Q       QUIT Custom (saves changes)
+R       Require/don't require alias for exit; ignore direction
+S       Edit the success line
+T       Alter Type of exit (passage, door, etc)
+V       View exit information
+X       Require/don't require exit name to be a verb
+?       This list
+
+
+Object Customization:
+---------------------
+
+Custom object> ?
+
+A       "a", "an", "some", etc.
+D       Edit a Description of the object
+F       Edit the GET failure message
+G       Set the object required to pick up this object
+1       Set the get success message
+K       Set the Kind of object this is
+L       Edit the label description ("There is a ... here.")
+P       Program the object based on the kind it is
+R       Rename the object
+S       Toggle the sticky bit
+
+U       Set the object required for use
+2       Set the place required for use
+3       Edit the use failure description
+4       Edit the use success description
+V       View attributes of this object
+
+X       Edit the extra description
+5       Edit extra desc #2
+E       Exit (same as Quit)
+Q       Quit (same as Exit)
+?       This list
+
+
+Appendix D:  Monster Playerlist as of June 5, 1988
+
+dolpher       ! Monster Manager        5-JUN-1988  1:48pm * great baths
+dasun_c       ! Iceman                 4-JUN-1988 10:30pm * the transporter room
+kirsten       ! Kirsten                4-JUN-1988 11:20pm * ffoirefirma
+isakson       ! Satan                  3-JUN-1988 10:13am * satan's private hell
+tlb05405      ! Tlb05405               3-JUN-1988 11:59am * east hall
+nate          ! Smaug                  3-JUN-1988  7:41pm * platform 1
+skrenta       ! Faust                  3-JUN-1988  8:37pm * tower room
+gary          ! Monster Vice Manager   2-JUN-1988  9:50pm * inner office
+laura         ! Laura                  2-JUN-1988 10:36pm * turbolift chamber
+james         ! James                  1-JUN-1988  7:54pm * chuk's elevator
+chuk          ! SoulStorm              1-JUN-1988  9:57pm * east hall
+peter_t       ! Peter_t               31-MAY-1988  8:33pm * pine forest
+cary          ! Cary                  31-MAY-1988 11:20pm * maelstrom
+francisco     ! Prof. Anthrax         30-MAY-1988  3:54pm * waterbed
+sundeep       ! Sundeep               29-MAY-1988  2:21pm * mta office
+bkc04916      ! Cheekster             28-MAY-1988 10:51am * the 'ell stop
+ktl04905      ! Corwin                28-MAY-1988 11:44am * west hall
+perry         ! Bufu Master!!!        28-MAY-1988  8:40pm * pinkie's place
+maryahn       ! pinkie                27-MAY-1988 12:39pm * the sewer tunnel
+immell        ! hurricane eye         26-MAY-1988  2:25am * post office 3
+robert        ! Hungry Wolf           26-MAY-1988  2:26am * roll6
+linda         ! linlop                26-MAY-1988 10:47am * terminal room
+jeff          ! Pringle               25-MAY-1988  7:12pm * ic
+mic00229      ! Mic00229              22-MAY-1988  8:33pm * great hall
+jeffoire      ! Ffoire Zen Salad      20-MAY-1988  1:41pm * bar
+schroder      ! Schroder              19-MAY-1988 10:09am * burrow
+lunde         ! Purple Peril          18-MAY-1988 12:55pm * cloud 9.5
+pib           ! Great Pib             17-MAY-1988 11:51pm * great pib's lair
+ahrens        ! it                    15-MAY-1988  4:56pm * landing
+mborsetti     ! Mborsetti             12-MAY-1988 10:20pm * sewer crossroads
+brian         ! Mr. Raven             11-MAY-1988 11:24am * a damp and dark hole
+wen05563      ! Gary                  11-MAY-1988  9:00pm * great hall
+jimbo         ! Jimbo                  8-MAY-1988 10:02pm * great hall
+lentz         ! Lentz                  7-MAY-1988  8:24am * front of isp noyes
+miller        ! Mungus                 5-MAY-1988  1:14pm * starbase
+otto          ! Otto                   4-MAY-1988  8:45pm * heidi's nightmare
+chris         ! House Manager          3-MAY-1988  3:54am * home base
+liao          ! Liao                  30-APR-1988  1:21pm * white house
+chaz          ! Chaz                  29-APR-1988  4:05pm * post office 2
+jmc           ! Run JMC               29-APR-1988  4:37pm * isp heaven
+rod           ! Rod                   29-APR-1988  9:00pm * great hall
+choi          ! Choi                  28-APR-1988  8:25pm * east hall
+bo            ! God                   26-APR-1988  1:58pm * great hall
+jonathan      ! Jonathan              26-APR-1988  5:26pm * eye of the hurricane
+swift         ! Swift                 26-APR-1988  8:53pm * post office hall
+ric05787      ! Deadhead              26-APR-1988 10:57pm * nightmarish room
+mccoy         ! The Scribe            26-APR-1988 11:41pm * scribe home
+g_wenslow     ! Gary II               24-APR-1988 11:58pm * east hall
+kri04333      ! Kri04333              18-APR-1988 12:11am * great hall
+dissett       ! Kronos                18-APR-1988 10:13pm * kronos' room
+wantz         ! Wantz                 17-APR-1988  2:51pm * great hall
+cheezer       ! Cheezer               16-APR-1988  7:55pm * the pine forest
+ahr04465      ! Ivo                   16-APR-1988  7:56pm * sewer transport
+joey          ! geek                  15-APR-1988  8:03pm * forest crossroads
+wargaski      ! Wargaski              14-APR-1988  4:01pm * toxicated
+eric          ! Eric                  13-APR-1988  3:51pm * the hall of chuk
+rwc00220      ! Rwc00220              12-APR-1988  1:32pm * great hall
+kstull        ! Kstull                12-APR-1988  5:01pm * post office 3
+tim           ! Tim                   11-APR-1988  8:26pm * great hall
+sean          ! Sean                  10-APR-1988  4:27pm * great hall
+sam           ! Sam                   10-APR-1988 12:54pm * great hall
+dean          ! Artagel                9-APR-1988  8:21am * turbolift chamber
+supercom      ! Cursor                 8-APR-1988 12:00am * forest paths
+anne          ! Anne                   7-APR-1988  6:55pm * great hall
+lisa          ! Lisa                   7-APR-1988  6:56pm * great hall
+mouse         ! Mouse                  3-APR-1988 11:26pm * west hall
+mca04477      ! Mca04477               2-APR-1988  8:56pm * burrow
+sajiv         ! Sajiv                 30-MAR-1988  6:06pm * great hall
+chad          ! Chad                  30-MAR-1988  6:37pm * chuk's elevator
+jennifer      ! Jennifer              30-MAR-1988  7:22pm * east hall
+lasonia       ! Lasonia               29-MAR-1988 11:22am * west hall
+brian_t       ! Brian_t               29-MAR-1988 11:59am * maelstrom
+mikk          ! Random                29-MAR-1988 11:19pm * ledge
+topher        ! Topher                28-MAR-1988  1:19pm * great hall
+spectre       ! Ghost in the machine  28-MAR-1988 11:43pm * ghost's mailroom
+dave          ! Dave                  18-MAR-1988 10:14am * post office hall
+penguins      ! Penguins Amok         18-MAR-1988 11:52pm * chuk's elevator
+lawson        ! Space Cowboy          18-MAR-1988 12:23pm * great hall
+heidi         ! Heidi                 17-MAR-1988  1:11am * digital purgatory
+bueno         ! Bueno                 17-MAR-1988  7:49pm * post office hall
+dan           ! Grando                16-MAR-1988  8:18am * eye of the hurricane
+eric_yue      ! Samsok                16-MAR-1988  9:29pm * the yueguy's joint
+cra01453      ! Cra01453              15-MAR-1988  3:01am * great hall
+adam          ! Adam                  14-MAR-1988  6:45pm * round room
+was04906      ! Milt                  14-MAR-1988  9:48pm * great hall
+watson        ! Watson                14-MAR-1988 10:22pm * chuk's elevator
+brianw        ! Brianw                12-MAR-1988         * ffoirefirma
+mike          ! Mike                  12-MAR-1988         * toxicated
+predator      ! Predator              12-MAR-1988         * east hall
+daniel        ! Daniel                11-MAR-1988         * west hall
+dav08345      ! Dav08345              11-MAR-1988         * great hall
+vlahos        ! otis                  11-MAR-1988         * post office
+ginter        ! Ginter                10-MAR-1988         * living room
+rob09549      ! Rob09549               9-MAR-1988         * great hall
+dora          ! Dora                   8-MAR-1988         * toxicated
+kim           ! kim                    8-MAR-1988         * post office 2
+michael       ! Prabdib                7-MAR-1988         * tunnel of love
+bradley       ! Bradley               29-FEB-1988         * eye of the hurricane
+john          ! Raunchmeister         29-FEB-1988         * underhall
+melvin        ! Killer Melvin         27-FEB-1988         * chuk's elevator
+cliff         ! Cliff                 26-FEB-1988         * east hall
+
+
+Appendix E:  An Actual Monster Game Log
+
+$ monster
+Welcome to Monster!  Hit return to start:
+
+Welcome back, Faust.  Your last play was on 1-JUN-1988 at 10:47pm.
+
+You're in Great Hall
+You're in the middle of a vast hall stretching out of sight to the
+east and west.  Strange shadows play across the high vaulted ceiling.
+The floor is set with smooth rectangular stones.  The walls feel slightly
+cold to the touch, and damp with condensation.  A copper plaque, slightly
+green with age, is set into one wall.
+
+Monster Manager is here.
+>
+Monster Manager vanishes in a brilliant burst of multicolored light.
+> l
+You're in Great Hall
+You're in the middle of a vast hall stretching out of sight to the
+east and west.  Strange shadows play across the high vaulted ceiling.
+The floor is set with smooth rectangular stones.  The walls feel slightly
+cold to the touch, and damp with condensation.  A copper plaque, slightly
+green with age, is set into one wall.
+
+>
+Monster Manager appears in a brilliant burst of multicolored light.
+> who
+                   Monster Status
+                 1-JUN-1988 10:48pm
+
+Username        Game Name                 Where
+dolpher         Monster Manager           great hall
+skrenta         Faust                     great hall
+> look plaque
+
+The plaque looks very old and corroded.   However, you can still make out
+the writing:
+
+ " Monster, created by Rich Skrenta, 1988.  Play at your own risk. "
+
+> show details
+Details here that you may inspect:
+    stones
+    plaque
+> look stones
+The stones are rough and black, and cold to the touch.  Although the
+mortar work appears to have been expertly done, it has decayed with time.
+Many stones are cracked, and narrow spaces fracture the carefully laid
+pattern.  Some of the stones are quite loose.  You might be able to lift
+one of them with some effort.
+>
+Monster Manager is looking at the stones.
+>
+Monster Manager is looking at the plaque.
+>
+Monster Manager says, "Hey Faust, let's go down to the Underhall."
+>
+Monster Manager manages to lift a stone in the floor and descends.
+> lift
+With great effort, you manage to lift the stone enought to fit inside.
+
+Once below the stone, it falls back into place, sealing out the light
+from above.  You squirm down the narrow tunnel . . .
+
+You're in UnderHall
+This is a cramped, humid room beneath the Great Hall.  The walls are
+dripping with water condensed from mist rising from the baths.  Some
+of the mist follows the ceiling and dissappears up the narrow tunnel.
+
+Stairs lead north down to the Great Baths.
+A neon sign flashes "Great PIB's Lair" over a door to the South.
+You could manage a crawl through a narrow tunnel leading upwards.
+
+Monster Manager is here.
+> look Monster Manager
+Monster Manager is the stereotype of a computer hacker.  He is wearing
+a flannel shirt with several snickers bars in the breast pocket.  On
+his belt is an ASCII-HEX conversion chart.  On his feet are a scuffed
+pair of hiking boots so he can tackle those dangerous mountains that
+crop up in operations.  Also dangling from his belt is a battered box
+with many buttons on the front and wires with sockets on the ends protruding
+from the back.  The switches seem to have been placed haphazardly, but
+the object is unmistakably one of great power nonetheless.
+
+Monster Manager is in perfect health.
+Monster Manager is empty handed.
+>
+Monster Manager is looking at you.
+>
+Monster Manager swings at you but misses.
+>
+You duck in time to avoid Monster Manager's punch.
+>
+You see stars as Monster Manager bashes you in the face.
+>
+You parry Monster Manager's attack.
+> punch Monster Manager
+You can't punch the Monster Manager.
+> l
+You're in UnderHall
+This is a cramped, humid room beneath the Great Hall.  The walls are
+dripping with water condensed from mist rising from the baths.  Some
+of the mist follows the ceiling and dissappears up the narrow tunnel.
+
+Stairs lead north down to the Great Baths.
+A neon sign flashes "Great PIB's Lair" over a door to the South.
+You could manage a crawl through a narrow tunnel leading upwards.
+
+Monster Manager is here.
+> n
+You're in Great Baths
+These are the luxurious Great Baths where tired adventurers may come
+to relax and try to regain their health and youth from the mineral waters.
+From where you stand at the entrance, you can see below you the bubbling
+soapy pools of water churning violently in tile-lined pits.  The pools
+are fed by hot springs from deep in the rock beneath you.  Steam and
+huge soapy bubbles rise out of the hot pools of water.  The bubbles
+dance through the air, climbing higher and higher, until they either
+burst on the sharp walls of the cave or are lost in the mist above you.
+
+Shallow tiled steps, wet and slick from the hot soapy waters of the
+springs, lead down to the pools.
+
+Rough stone stairs lead up to the south.
+
+>
+In an explosion of orange smoke Monster Vice Manager poofs into the room.
+>
+Monster Manager has come down the stairs from the Underhall.
+>
+Monster Vice Manager produces a "who" list and reads it.
+> system
+System> v
+
+               used   free   total
+Block file    1008     92    1100
+Line file     1501    109    1610
+Room file      283     27     310
+Object file    139     41     180
+Integer file     6      0       6
+
+System>
+Monster Vice Manager is in system maintenance mode.
+System> exit
+>
+Monster Vice Manager is no longer in system maintenance mode.
+> 'Hey Gary
+>
+Monster Vice Manager says, "Hi, Faust."
+> look Monster Vice Manager
+The Monster Vice Manager is dressed in a conservative three piece
+suit.  The stern expression on his face is just a facade, he really
+is a warm and sensitive guy underneath.  He is willing to answer
+any questions and help out with any problems.  He can best be
+described by the phrase:
+
+            "Do what thou wilt, so mete it be."
+
+He returns your gaze with a hint of understanding and amusement.
+
+Monster Vice Manager is in perfect health.
+Monster Vice Manager is empty handed.
+>
+Monster Vice Manager is looking at you.
+> punch Monster Vice Manager
+You swing wild and miss.
+> .
+Monster Vice Manager ducks and avoids your punch.
+> .
+A quick punch, but it only grazes Monster Vice Manager.
+>
+You only feel the breeze as Monster Vice Manager swings wildly.
+> .
+You swing wild and miss.
+>
+You see stars as Monster Vice Manager bashes you in the face.
+>
+You only feel the breeze as Monster Vice Manager swings wildly.
+> .
+You deliver a quick jab to Monster Vice Manager's jaw.
+>
+Monster Vice Manager's swing misses you by a yard.
+> .
+Your roundhouse blow sends Monster Vice Manager reeling.
+>
+You double over after Monster Vice Manager lands a mean jab to your stomach!
+Monster Vice Manager looks a little dazed.
+>
+Monster Vice Manager vanishes from the room in a cloud of orange smoke.
+> who
+                   Monster Status
+                 1-JUN-1988 10:56pm
+
+Username        Game Name                 Where
+dolpher         Monster Manager           great baths
+skrenta         Faust                     great baths
+gary            Monster Vice Manager      inner office
+> poof inner office
+
+This rooms is a conservatively decorated office.  A large
+desk dominates the room.  Several pictures hang on the walls
+and a silver service is on a stand off to the left.  Two plush
+chairs beckon for you to sit down.
+
+There are stairs leading down.
+
+Monster Vice Manager is here.
+Monster Vice Manager looks a little dazed.
+> sh det
+Details here that you may inspect:
+    bin
+    plaque
+    pictures
+    stand
+> look bin
+
+The bin has a sign on it saying, "Leave mail for the Monster
+Vice Manager here.  Thank you."
+
+> look plaque
+
+The plaque reads:
+
+         Gary Wenslow, Monster Vice Manager
+
+> look pictures
+
+These are very nice pictures of landscapes.  They look expensive.
+
+> look stand
+
+The silver service on this stand is of fine workmanship.
+There are also crystal goblets and flasks containing very
+fine wine, brandy, and whiskey.
+
+> l
+
+This rooms is a conservatively decorated office.  A large
+desk dominates the room.  Several pictures hang on the walls
+and a silver service is on a stand off to the left.  Two plush
+chairs beckon for you to sit down.
+
+There are stairs leading down.
+
+Monster Vice Manager is here.
+Monster Vice Manager looks a little dazed.
+> rooms gary
+gary:
+    tunnel of love            more tunnel of love       end of tunnel
+    hot dog stand             picnic                    window
+    mvm office                inner office              hall1
+    hall2                     hall3                     hall4
+    hall5                     hall6                     hall7
+    hall8                     hall9                     concession
+    roll1                     roll2                     roll3
+    roll4                     roll5                     roll6
+    roll7                     roll8                     roll9
+    roll10                    worker's ledge            railing
+    rope                      mvm mail room
+
+> rooms dolpher
+dolpher:
+    void                      pit of fire               underhall
+    great baths               pools                     in the pool
+    in the bubble             higher bubble             highest bubble
+    ledge                     tower ledge               circular staircase
+    behind house              kitchen                   living room
+    bottom of stairs          manager's mailbox         tower room
+    on the scaffolding        round room                mountain pass
+    roof of tower             west passageway           castle entrance
+    center hall               outside the gate          east passageway
+    narrow passage
+
+> poof behind house
+You're at Behind House
+The back door of the house is boarded up, but the windows have not been
+blocked.  One window at ground level leads into what appears to be the
+kitchen.  All of the other windows are too far above the ground for you
+to reach.
+
+A path leads west to the front of the house.
+
+> form Study
+> poof studty
+There is no room named studty.
+> poof study
+You're in Study
+
+A note on the east wall says "Your exit here."
+
+> refuse east
+Exits east will be refused.
+> l
+You're in Study
+
+> desc
+[ Editing the primary room description ]
+Enter text.  Terminate with ** at the beginning of a line.
+You have 10 lines maximum.
+
+ 1: This is a luxurious study walled with fine oak paneling.  A window
+ 2: looks out of the east wall.  It is surrounded by purple curtains.
+ 3: There is a small sign on the wall.
+ 4: **
+
+* e
+> l
+You're in Study
+This is a luxurious study walled with fine oak paneling.  A window
+looks out of the east wall.  It is surrounded by purple curtains.
+There is a small sign on the wall.
+
+> desc sign
+[ Editing detail "sign" of this room ]
+Enter text.  Terminate with ** at the beginning of a line.
+You have 10 lines maximum.
+
+ 1: The note seems to have been hurriedly scrawled.  It reads:
+ 2:
+ 3:    "  This room for demonstration purposes only!  "
+ 4:
+ 5: **
+
+* ?
+
+A       Append text to end
+C       Check text for correct length with parameter substitution (#)
+D #     Delete line #
+E       Exit & save changes
+I #     Insert lines before line #
+P       Print out description
+Q       Quit: THROWS AWAY CHANGES
+R #     Replace text of line #
+Z       Zap all text
+@       Throw away text & exit with the default description
+?       This list
+
+
+* p
+
+ 1: The note seems to have been hurriedly scrawled.  It reads:
+ 2:
+ 3:    "  This room for demonstration purposes only!  "
+ 4:
+
+* e
+> sh det
+Details here that you may isspect:
+    sign
+> look sign
+The note seems to have been hurriedly scrawled.  It reads:
+
+   "  This room for demonstration purposes only!  "
+
+> l
+You're in Study
+This is a luxurious study walled with fine oak paneling.  A window
+looks out of the east wall.  It is surrounded by purple curtains.
+There is a small sign on the wall.
+
+> desc sign
+[ Editing detail "sign" of this room ]
+
+* i 1
+1:
+2: **
+
+* p
+
+ 1:
+ 2: The note seems to have been hurriedly scrawled.  It reads:
+ 3:
+ 4:    "  This room for demonstration purposes only!  "
+ 5:
+
+* e
+> look sign
+
+The note seems to have been hurriedly scrawled.  It reads:
+
+   "  This room for demonstration purposes only!  "
+
+> l
+You're in Study
+This is a luxurious study walled with fine oak paneling.  A window
+looks out of the east wall.  It is surrounded by purple curtains.
+There is a small sign on the wall.
+
+> form Behind the Curtains
+> link west
+Hit return alone at any prompt to terminate exit creation.
+
+Room to link to? behind the curtains
+Exit comes out in target room
+from what direction? east
+Exit created.  Use CUSTOM west to customize your exit.
+> l
+You're in Study
+This is a luxurious study walled with fine oak paneling.  A window
+looks out of the east wall.  It is surrounded by purple curtains.
+There is a small sign on the wall.
+
+There is a passage leading west.
+
+> custom west
+Customizing west exit
+If you would rather be customizing this room, type CUSTOM with no arguments
+If you would rather be customizing an object, type CUSTOM <object name>
+
+Type ** for any line to leave it unchanged.
+Type return for any line to select the default.
+
+Custom west> ?
+
+A       Set an Alias for the exit
+C       Conceal an exit
+D       Edit the exit's main Description
+E       EXIT custom (saves changes)
+F       Edit the exit's failure line
+I       Edit the line that others see when a player goes Into an exit
+K       Set the object that is the Key to this exit
+L       Automatically look [default] / don't look on exit
+O       Edit the line that people see when a player comes Out of an exit
+Q       QUIT Custom (saves changes)
+R       Require/don't require alias for exit; ignore direction
+S       Edit the success line
+T       Alter Type of exit (passage, door, etc)
+V       View exit information
+X       Require/don't require exit name to be a verb
+?       This list
+
+Custom west> a
+Alternate name for the exit? curtains
+Custom west> r
+The alias for this exit will be required to reference it.
+Custom west> d
+Enter a one line description of the exit.
+
+Type ** to leave line unchanged, * to make [no line]
+*
+Custom west> exit
+> l
+You're in Study
+This is a luxurious study walled with fine oak paneling.  A window
+looks out of the east wall.  It is surrounded by purple curtains.
+There is a small sign on the wall.
+
+> go curtains
+You're in Behind the Curtains
+
+There is a passage leading east.
+A note on the floor says "Your exit here."
+
+> e
+You're in Study
+This is a luxurious study walled with fine oak paneling.  A window
+looks out of the east wall.  It is surrounded by purple curtains.
+There is a small sign on the wall.
