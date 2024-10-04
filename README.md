@@ -31,7 +31,7 @@ This repo is an archive of what was originally posted on his website.
 - [A port of VMS Monster to C](./website/monster.c)
 - [Description of Monster Helsinki](./website/monster_helsinki.txt), an expanded descendant
   - [monster_helsinki.tgz](./website/monster_helsinki.tgz)
-A [game log](./website/sunyab-monster.txt) from University of Buffalo's monster descendant, by Brent LaVelle, Rob Rothkopf and Mark Cromwell
+- A [game log](./website/sunyab-monster.txt) from University of Buffalo's monster descendant, by Brent LaVelle, Rob Rothkopf and Mark Cromwell
 
 ## Note on the License
 The license selected for this repository is based on the the following, from `readme.txt`:
