@@ -42,5 +42,16 @@ You may freely copy, distribute and change Monster as you wish.
 
 As far as I can see, no further requirements are stated anywhere in the codebase.  Although the author says that he would love to hear from anyone who gets the code running.
 
+## Bonus Files
+- An [alternate source](./bonus/monster.tar.gz) for the original Monster code.
+  
+  Found in the [MudBytes.net](https://www.mudbytes.net/files/766) file repository; contains the same license in the README.
+- A copy of the [University of Buffalo's Monster](./bonus/ub_vms_monster.zip) descendant mentioned by Skrenta.
+  
+  Found on [Matt McGlincy's GitHub](https://github.com/mcglincy/ub_vms_monster); contains no license information.
+  
+  
+
+
 
 [^1]: [Fandom - MUD Wiki --- Monster (game)](https://mud.fandom.com/wiki/Monster_(game))
